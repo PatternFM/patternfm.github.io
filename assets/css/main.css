@@ -3219,9 +3219,8 @@
 	}
 
 		.wrapper > .inner {
-			padding: 5em 5em 3em 5em ;
+			padding: 5em 7em 5em 7em;
 			max-width: 100%;
-			width: 75em;
 		}
 
 			@media screen and (max-width: 1680px) {
@@ -3884,8 +3883,34 @@
 	background-color: #FFFFFF !important;
 }
 
-#documentation p, #documentation h1, #documentation h2, #documentation h3, #documentation h4, #documentation h5 {
+#documentation h1, #documentation h2, #documentation h3, #documentation h4, #documentation h5 {
 	color: #333333;
+	font-family: Raleway;
+}
+
+#documentation h1 {
+  letter-spacing: 1.5px;
+  font-weight: 300;
+	margin-top: 40px;
+	font-family: "Open Sans";
+	font-weight: 500;
+	font-style: normal;
+	letter-spacing: 0.5px;
+	margin-bottom: 20px;
+	font-size: 35px;
+	line-height: 1.25;
+	color: #333;
+}
+
+#documentation p {
+	font-weight: 400;
+  font-style: normal;
+  font-family: Open Sans, MundoSans, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  line-height: 27px;
+  margin: 0;
+  padding-bottom: 30px;
+  color: #444;
 }
 
 #documentation pre, #documentation code {
@@ -3915,10 +3940,19 @@
     font-weight: 500;
 }
 
+#documentation b, #documentation strong {
+	color: #333;
+}
+
+h1 {
+	font-family: "Raleway";
+	font-weight: 400;
+	letter-spacing: 1px;
+}
 
 /* Intro */
 
-	#intro {
+	#about {
 		background-attachment: fixed;
 		background-image: url("images/intro.svg");
 		background-position: top right;
@@ -3926,13 +3960,20 @@
 		background-size: 100% 100%;
 	}
 
-		#intro p {
-			font-size: 1.25em;
+  #about h1 {
+		text-transform: uppercase;
+	}
+
+		#about p {
+			font-size: 1.1em;
+	    letter-spacing: 0.4px;
+	    font-family: "Open Sans";
+	    color: #FFFFFF;
 		}
 
 			@media screen and (max-width: 980px) {
 
-				#intro p br {
+				#about p br {
 					display: none;
 				}
 
@@ -3940,7 +3981,7 @@
 
 			@media screen and (max-width: 736px) {
 
-				#intro p {
+				#about p {
 					font-size: 1em;
 				}
 
@@ -3948,7 +3989,7 @@
 
 		@media screen and (max-width: 1280px) {
 
-			#intro {
+			#about {
 				background-attachment: scroll;
 			}
 

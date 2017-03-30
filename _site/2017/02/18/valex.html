@@ -13,10 +13,10 @@
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Voces" rel="stylesheet">
 	</head>
 	<body>
 
-		<!-- Sidebar -->
 			<section id="sidebar">
 				<div class="inner">
 					<nav>
@@ -30,7 +30,6 @@
 				</div>
 			</section>
 
-		<!-- Wrapper -->
 			<div id="wrapper">
 
 					<section id="about" class="wrapper style1 fullscreen fade-up">
@@ -38,7 +37,7 @@
 							<h1>Valex</h1>
 							<p>A YAML-based validation and exception management library that helps you produce consumable REST error payloads.</p>
 							<ul class="actions">
-								<li><a href="#one" class="button scrolly">Learn more</a></li>
+								<li><a href="#documentation" class="button scrolly">Learn more</a></li>
 							</ul>
 						</div>
 					</section>
@@ -51,27 +50,26 @@
 
 <p>An API should provide a useful error responses in a known, consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:</p>
 
-<p><strong>HTTP 422 (Unprocessable Entity)</strong>
-<code class="highlighter-rouge">json
-{
-  "errors": [
-    {
-      "code": "ACC-0001",
-      "message": "An account username is required."
-    }
-  ]
-}
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACC-0001"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An account username is required."</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
 
-<p>Valex builds on top of the BeanValidation API to give devlopers the ability to configure an error message, error code, and an exception to throw when a validation check fails, all in one spot.</p>
+<p>Valex builds on top of the BeanValidation API to give developers the ability to configure an error message, error code, and an exception to throw when a validation check fails, all in one spot.</p>
 
 <div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">account.username.required</span><span class="pi">:</span>
   <span class="s">message</span><span class="pi">:</span> <span class="s">An account username is required.</span>
   <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0001</span>
   <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
-
 </code></pre>
 </div>
+
 <p>The exception, when thrown, will carry with it the error message and error code as specified in the configuration. If you’re using Spring, you can use the @ExceptionHandler to easily convert the exception into the JSON format specified above:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@RestController</span>
@@ -119,57 +117,57 @@
 
 <h1 id="getting-started">Getting Started</h1>
 
-<p>To get started, add the following dependency to your depedency list:
-```xml</p>
-<dependency>
-    <groupId>fm.pattern</groupId>
-    <artifactId>valex</artifactId>
-    <version>1.0.6</version>
-</dependency>
-<div class="highlighter-rouge"><pre class="highlight"><code>
-Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:
+<p>To get started, add the following dependency to your dependency list:</p>
 
-```java
-import javax.validation.Validator;
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>fm.pattern<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>valex<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.6<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre>
+</div>
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+<p>Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:</p>
 
-import fm.pattern.valex.SimpleValidationService;
-import fm.pattern.valex.ValidationService;
-import fm.pattern.valex.annotations.ValidationAdvisor;
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">javax.validation.Validator</span><span class="o">;</span>
 
-@Configuration
-@EnableAspectJAutoProxy
-public class ValidationConfiguration {
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.EnableAspectJAutoProxy</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.validation.beanvalidation.LocalValidatorFactoryBean</span><span class="o">;</span>
 
-    @Bean(name = "validator")
-    public Validator validator() {
-        return new LocalValidatorFactoryBean();
-    }
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.SimpleValidationService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.ValidationService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.ValidationAdvisor</span><span class="o">;</span>
 
-    @Bean
-    public ValidationService validationService() {
-        return new SimpleValidationService(validator());
-    }
+<span class="nd">@Configuration</span>
+<span class="nd">@EnableAspectJAutoProxy</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ValidationConfiguration</span> <span class="o">{</span>
 
-    @Bean
-    public ValidationAdvisor validationAdvisor() {
-        return new ValidationAdvisor(validationService());
-    }
+    <span class="nd">@Bean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"validator"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">Validator</span> <span class="nf">validator</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">LocalValidatorFactoryBean</span><span class="o">();</span>
+    <span class="o">}</span>
 
-}
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">ValidationService</span> <span class="nf">validationService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">SimpleValidationService</span><span class="o">(</span><span class="n">validator</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="n">ValidationAdvisor</span> <span class="nf">validationAdvisor</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ValidationAdvisor</span><span class="o">(</span><span class="n">validationService</span><span class="o">());</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
 </code></pre>
 </div>
 <p>The Valex API relies on an underlying BeanValidation Validator implementation to execute valiation logic on annotated models. In the example above we’re bootstrapping the Spring LocalValidatorFactory bean, but you can bootstrap your own validator as well:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>@Bean(name = "validator")
-public Validator validator() {
-    return Validation.buildDefaultValidatorFactory().getValidator();
-}
-
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Bean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"validator"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="n">Validator</span> <span class="nf">validator</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">Validation</span><span class="o">.</span><span class="na">buildDefaultValidatorFactory</span><span class="o">().</span><span class="na">getValidator</span><span class="o">();</span>
+<span class="o">}</span>
 </code></pre>
 </div>
 
@@ -181,8 +179,7 @@ public Validator validator() {
 <h3 id="yaml-configuration">YAML Configuration</h3>
 <p>If you choose to go down the YAML configuration path, place a file named <strong>ValidationMessages.yml</strong> on the root of your classath. An example YAML configuration file will look like this:</p>
 
-<div class="language-yaml highlighter-rouge"><pre class="highlight"><code>
-<span class="s">default</span><span class="pi">:</span>
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">default</span><span class="pi">:</span>
   <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
 
 <span class="s">account.id.required</span><span class="pi">:</span>
@@ -214,7 +211,6 @@ public Validator validator() {
   <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">No</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">username:</span><span class="nv"> </span><span class="s">%s"</span>
   <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0008</span>
   <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.EntityNotFoundException</span>
-
 </code></pre>
 </div>
 
@@ -282,16 +278,18 @@ The fully qualified classname of the <em>ReportableException</em> that should be
 <h3 id="default-exceptions">Default Exceptions</h3>
 <p>You can configure a default exception class to return when a validation element does not contain an explicit <em>exception</em> property.</p>
 
-<p><strong>YAML Configuration</strong>
-<code class="highlighter-rouge">yaml
-default:
-  exception: fm.pattern.valex.UnprocessableEntityException
-</code></p>
+<p><strong>YAML Configuration</strong></p>
 
-<p><strong>Properties Configuration</strong>
-<code class="highlighter-rouge">
-default.exception=fm.pattern.valex.UnprocessableEntityException
-</code></p>
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">default</span><span class="pi">:</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
+</code></pre>
+</div>
+
+<p><strong>Properties Configuration</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>default.exception=fm.pattern.valex.UnprocessableEntityException
+</code></pre>
+</div>
 
 <p>In both cases, an UnprocessableEntityException will be returned when a validation element does not explicitly define an exception property.</p>
 
@@ -299,8 +297,7 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
 
 <p>Use the <em>ValidationService</em> validate() method to perform validation against your <a href="http://beanvalidation.org/1.0/">BeanValidation</a> annotated models. The validate() method returns a typed <em>Result</em> object, which contain the final (and immutable) state of a validation event.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.ValidationService</span><span class="o">;</span>
 
 <span class="nd">@Service</span>
@@ -371,8 +368,7 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
 <h3 id="validation-groups">Validation Groups</h3>
 <p>Valex provides first class support for BeanValidation groups. The validate() method takes a varargs argument of classes that will be used to perform targeted validation.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="nd">@Service</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Service</span>
 <span class="kd">class</span> <span class="nc">AccountServiceImpl</span> <span class="kd">implements</span> <span class="n">AccountService</span> <span class="o">{</span>
 
     <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
@@ -391,8 +387,7 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
 
 <p>Implementation note: When you have an interface and an underlying implementation class, the @Valid annotation must be declared on the <em>interface</em> method, and not the <em>concrete</em> method.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
 
     <span class="c1">// The @Valid annotation is declared on the interface method.</span>
     <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
@@ -412,8 +407,7 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
 
 <p>You can configure the @Valid annotation to throw an exception on validation failure by providing the  <code class="highlighter-rouge">throwException = true</code> argument to the @Valid annotation.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Valid</span><span class="o">;</span>
 
 <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
@@ -422,7 +416,6 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
     <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
 
 <span class="o">}</span>
-
 </code></pre>
 </div>
 
@@ -430,8 +423,7 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
 
 <p>You can specify one or more validation groups to apply when the @Valid annotation is kicked off.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Valid</span><span class="o">;</span>
 
 <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
@@ -439,7 +431,6 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
     <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span><span class="o">(</span><span class="n">First</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
 
 <span class="o">}</span>
-
 </code></pre>
 </div>
 
@@ -476,18 +467,18 @@ account.password.size:
 <h3 id="result-interpolation">Result Interpolation</h3>
 <p>Result objects can be created directly by using the <em>Result</em> accept() and reject() methods. The reject() method accepts a key to a configured message or a literal message along with a varargs array for message parameters. The reject() method message format is compatible with the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html">Java Formatter API</a>.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>public Result&lt;Account&gt; findById(String id) {
-    Account account = repository.findById(id);
-    if(account != null) {
-    	return Result.accept(account);
-    }
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">findById</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">account</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    	<span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+    <span class="o">}</span>
 
-    // Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.
-    return Result.reject("account.not_found", id);
+    <span class="c1">// Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.</span>
+    <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"account.not_found"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
 
-    // Return a Result using the given literal error message.
-    return Result.reject("No such account id: %s", id);
-}
+    <span class="c1">// Return a Result using the given literal error message.</span>
+    <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"No such account id: %s"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
 </code></pre>
 </div>
 
@@ -495,10 +486,10 @@ account.password.size:
 
 <p>Valex provides three GroupSequence implementations for creating (Create.class), updating (Update.class) and deleting (Delete.class) entities. Each GroupSequence has the following definition:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>@GroupSequence({CreateLevel1.class, CreateLevel2.class, CreateLevel3.class, CreateLevel4.class, CreateLevel5.class})
-public interface Create {
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@GroupSequence</span><span class="o">({</span><span class="n">CreateLevel1</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">CreateLevel2</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">CreateLevel3</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">CreateLevel4</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">CreateLevel5</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Create</span> <span class="o">{</span>
 
-}
+<span class="o">}</span>
 </code></pre>
 </div>
 
@@ -530,8 +521,7 @@ public interface Create {
 <h3 id="group-sequence-annotations">Group Sequence Annotations</h3>
 <p>If you plan to use the Valex group sequences, you can also take advantage of the Valex @Create, @Update and @Delete annotations as a shorthand notation to apply group sequence based validation.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Create</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Update</span><span class="o">;</span>
@@ -554,8 +544,7 @@ public interface Create {
 
 <p>The annotations can also be configured to throw the underlying validation result exception if you do not want the annotations to return typed <em>Result</em> objects.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Create</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Create</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Update</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Delete</span><span class="o">;</span>
 
@@ -566,7 +555,6 @@ public interface Create {
     <span class="kd">public</span> <span class="n">Account</span> <span class="nf">update</span><span class="o">(</span><span class="nd">@Update</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
 
     <span class="kd">public</span> <span class="n">Account</span> <span class="nf">delete</span><span class="o">(</span><span class="nd">@Delete</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
-
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -577,8 +565,7 @@ public interface Create {
 
 <p>Let’s take the following AccountService interface as an example:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
 
    <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
 
@@ -589,7 +576,6 @@ public interface Create {
    <span class="n">Account</span> <span class="nf">findById</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">);</span>
 
    <span class="n">Account</span> <span class="nf">findByUsername</span><span class="o">(</span><span class="n">String</span> <span class="n">username</span><span class="o">);</span>
-
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -600,8 +586,7 @@ public interface Create {
 
 <p>A more expressive contract can provide a simple, consistent approach to handling success and error conditions:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
 
    <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
 
@@ -622,7 +607,6 @@ public interface Create {
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Account</span> <span class="n">pending</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Account</span><span class="o">();</span>
 <span class="o">...</span>
 <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="n">accountService</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">pending</span><span class="o">).</span><span class="na">orThrow</span><span class="o">();</span>
-
 </code></pre>
 </div>
 
@@ -637,7 +621,6 @@ public interface Create {
   <span class="n">List</span><span class="o">&lt;</span><span class="n">Reportable</span><span class="o">&gt;</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">getErrors</span><span class="o">();</span>
   <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Failed to create account: "</span> <span class="o">+</span> <span class="n">errors</span><span class="o">);</span>
 <span class="o">}</span>
-
 </code></pre>
 </div>
 
@@ -645,12 +628,13 @@ public interface Create {
 
 <h1 id="building-from-source">Building from Source</h1>
 
-<p>Both JDK 8 and Maven 3 are required to build Valex from source. With these prerequisites in place you can build Valex by:
-<code class="highlighter-rouge">
-git clone https://github.com/PatternFM/valex.git
+<p>Both JDK 8 and Maven 3 are required to build Valex from source. With these prerequisites in place you can build Valex by:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/PatternFM/valex.git
 cd valex
 mvn clean install
-</code></p>
+</code></pre>
+</div>
 
 <h1 id="continuous-integration">Continuous Integration</h1>
 
@@ -665,7 +649,7 @@ mvn clean install
 
 					<section id="source" class="wrapper style3 fade-up">
 						<div class="inner">
-							
+
 						</div>
 					</section>
 
