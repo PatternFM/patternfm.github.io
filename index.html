@@ -1,0 +1,62 @@
+---
+layout: default
+---
+
+<div class="teaserimage">
+    <div class="teaserimage-image" {% if site.cover %}style="background-image: url({{ site.cover | prepend: site.baseurl }})"{% endif %}>
+        Teaser Image
+    </div>
+</div>
+
+<header class="blog-header">
+    {% if site.logo %}
+      <a class="blog-logo" href="{{site.url}}" style="background-image: url('{{ site.logo | prepend: site.domain }}')">{{ site.title }}</a>
+    {% endif %}
+    <h1 class="blog-title">{{ site.title }}</h1>
+    <h2 class="blog-description">{{ site.description }}</h2>
+</header>
+
+
+<main class="content" role="main">
+
+    <div class="cf frame">
+      {% for post in paginator.posts %}
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
+          <div class="article-item">
+            <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+            <header class="post-header">
+              <h2 class="post-title" itemprop="name"><a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a></h2>
+            </header>
+            <section class="post-excerpt" itemprop="description">
+              <p>{{ post.excerpt | strip_html | truncatewords: 51 }}</p>
+            </section>
+            <div class="post-meta">
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    {% if paginator.total_pages > 1 %}
+    <nav class="pagination" role="navigation">
+      {% if paginator.previous_page %}
+        {% if paginator.page == 2 %}
+          <a class="prev" href={{ "/" | prepend: site.baseurl }}>&laquo;</a>
+        {% else %}
+          <a class="prev" href={{ "/page" | prepend: site.baseurl | append: paginator.previous_page }}>&laquo;</a>
+        {% endif %}
+      {% else %}
+         <span class="no-prev">&laquo;</span>
+      {% endif %}
+
+      <span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+
+      {% if paginator.next_page %}
+         <a class="next" href={{ "/page" | prepend: site.baseurl | append: paginator.next_page }}>&raquo;</a>
+      {% else %}
+          <span class="no-next">&raquo;</span>
+      {% endif %}
+    </nav>
+    {% endif %}
+
+</main>

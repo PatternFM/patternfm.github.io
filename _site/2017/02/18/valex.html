@@ -1,0 +1,695 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+    <title>A YAML-based validation and exception management library that helps you produce consumable REST error payloads.</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#about">About</a></li>
+							<li><a href="#documentation">Documentation</a></li>
+							<li><a href="#source">Source Code</a></li>
+							<li><a href="#license">License</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+					<section id="about" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<h1>Valex</h1>
+							<p>A YAML-based validation and exception management library that helps you produce consumable REST error payloads.</p>
+							<ul class="actions">
+								<li><a href="#one" class="button scrolly">Learn more</a></li>
+							</ul>
+						</div>
+					</section>
+
+					<section id="documentation" class="wrapper style2 spotlights">
+						<div class="inner">
+							<h1 id="introduction">Introduction</h1>
+
+<p>Valex is a YAML-based validation and exception management library that helps you produce consumable REST error payloads.</p>
+
+<p>An API should provide a useful error responses in a known, consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:</p>
+
+<p><strong>HTTP 422 (Unprocessable Entity)</strong>
+<code class="highlighter-rouge">json
+{
+  "errors": [
+    {
+      "code": "ACC-0001",
+      "message": "An account username is required."
+    }
+  ]
+}
+</code></p>
+
+<p>Valex builds on top of the BeanValidation API to give devlopers the ability to configure an error message, error code, and an exception to throw when a validation check fails, all in one spot.</p>
+
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">account.username.required</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s">An account username is required.</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0001</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
+
+</code></pre>
+</div>
+<p>The exception, when thrown, will carry with it the error message and error code as specified in the configuration. If you’re using Spring, you can use the @ExceptionHandler to easily convert the exception into the JSON format specified above:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Endpoint</span> <span class="o">{</span>
+
+	<span class="nd">@ResponseBody</span>
+	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">UNPROCESSABLE_ENTITY</span><span class="o">)</span>
+	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">UnprocessableEntityException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleUnprocessableEntity</span><span class="o">(</span><span class="n">UnprocessableEntityException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
+	<span class="o">}</span>
+
+	<span class="nd">@ResponseBody</span>
+	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">UNAUTHORIZED</span><span class="o">)</span>
+	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">AuthenticationException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleAuthentication</span><span class="o">(</span><span class="n">AuthenticationException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
+	<span class="o">}</span>
+
+	<span class="nd">@ResponseBody</span>
+	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">FORBIDDEN</span><span class="o">)</span>
+	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">AuthorizationException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleAuthorization</span><span class="o">(</span><span class="n">AuthorizationException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
+	<span class="o">}</span>
+
+	<span class="nd">@ResponseBody</span>
+	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">NOT_FOUND</span><span class="o">)</span>
+	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">EntityNotFoundException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleEntityNotFound</span><span class="o">(</span><span class="n">EntityNotFoundException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
+	<span class="o">}</span>
+
+	<span class="nd">@ResponseBody</span>
+	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">INTERNAL_SERVER_ERROR</span><span class="o">)</span>
+	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">InternalErrorException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleInternalError</span><span class="o">(</span><span class="n">EntityNotFoundException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
+	<span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>Because Valex builds on top of the JSR-303 BeanValidation API, you can annotate your models with standard BeanValidation annotations. A ValidationMessages.properties file can also be used with Valex to minimise the migration path for existing JSR-303 implementations that want to use Valex for more robust API error reporting.</p>
+
+<h1 id="getting-started">Getting Started</h1>
+
+<p>To get started, add the following dependency to your depedency list:
+```xml</p>
+<dependency>
+    <groupId>fm.pattern</groupId>
+    <artifactId>valex</artifactId>
+    <version>1.0.6</version>
+</dependency>
+<div class="highlighter-rouge"><pre class="highlight"><code>
+Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:
+
+```java
+import javax.validation.Validator;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import fm.pattern.valex.SimpleValidationService;
+import fm.pattern.valex.ValidationService;
+import fm.pattern.valex.annotations.ValidationAdvisor;
+
+@Configuration
+@EnableAspectJAutoProxy
+public class ValidationConfiguration {
+
+    @Bean(name = "validator")
+    public Validator validator() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    @Bean
+    public ValidationService validationService() {
+        return new SimpleValidationService(validator());
+    }
+
+    @Bean
+    public ValidationAdvisor validationAdvisor() {
+        return new ValidationAdvisor(validationService());
+    }
+
+}
+</code></pre>
+</div>
+<p>The Valex API relies on an underlying BeanValidation Validator implementation to execute valiation logic on annotated models. In the example above we’re bootstrapping the Spring LocalValidatorFactory bean, but you can bootstrap your own validator as well:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>@Bean(name = "validator")
+public Validator validator() {
+    return Validation.buildDefaultValidatorFactory().getValidator();
+}
+
+</code></pre>
+</div>
+
+<p>If you plan to make use of Valex annotations, make sure you enable AspectJ proxying by including the <code class="highlighter-rouge">@EnableAspectJAutoProxy</code> annotation.</p>
+
+<h1 id="configure-error-codes-messages-and-exceptions">Configure Error Codes, Messages and Exceptions</h1>
+<p>You can configure your application’s error messages, error codes and exceptions using a YAML configuration file or a properties configuration file. It’s simply a matter of syntax preference in terms of which method you choose. The properties file is available to support an easier migration path if you have an existing BeanValidation implementation with a ValidationMessages.properties file already defined.</p>
+
+<h3 id="yaml-configuration">YAML Configuration</h3>
+<p>If you choose to go down the YAML configuration path, place a file named <strong>ValidationMessages.yml</strong> on the root of your classath. An example YAML configuration file will look like this:</p>
+
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code>
+<span class="s">default</span><span class="pi">:</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
+
+<span class="s">account.id.required</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">An</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">id</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">required."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0006</span>
+
+<span class="s">account.username.required</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">An</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">username</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">required."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0001</span>
+
+<span class="s">account.username.size</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">An</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">username</span><span class="nv"> </span><span class="s">must</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">between</span><span class="nv"> </span><span class="s">{min}</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">{max}</span><span class="nv"> </span><span class="s">characters."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0002</span>
+
+<span class="s">account.username.conflict</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">The</span><span class="nv"> </span><span class="s">username</span><span class="nv"> </span><span class="s">{validatedValue}</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">already</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">use."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0003</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.ResourceConflictException</span>
+
+<span class="s">account.password.required</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">An</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">password</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">required."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0004</span>
+
+<span class="s">account.password.size</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">An</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">password</span><span class="nv"> </span><span class="s">must</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">between</span><span class="nv"> </span><span class="s">{min}</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">{max}</span><span class="nv"> </span><span class="s">characters."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0005</span>
+
+<span class="s">account.username.not_found</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">No</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">username:</span><span class="nv"> </span><span class="s">%s"</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0008</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.EntityNotFoundException</span>
+
+</code></pre>
+</div>
+
+<h3 id="properties-configuration">Properties Configuration</h3>
+
+<p>If you choose to go down the Java properties file configuration path, place a file named <strong>ValidationMessages.properties</strong> on the root of your classath. An example properties configuration file will look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>default.exception=fm.pattern.valex.UnprocessableEntityException
+
+account.id.required=An account id is required.
+account.id.required.code=ACC-0006
+
+account.username.required=An account username is required.
+account.username.required.code=ACC-0001
+
+account.username.size=An account username must be between {min} and {max} characters.
+account.username.size.code=ACC-0002
+
+account.username.conflict=The username {validatedValue} is already in use.
+account.username.conflict.code=ACC-0003
+account.username.conflict.exception=fm.pattern.valex.ResourceConflictException
+
+account.password.required=An account password is required.
+account.password.required.code=ACC-0004
+
+account.password.size=An account password must be between {min} and {max} characters.
+account.password.size.code=ACC-0005
+
+account.username.not_found=No such username: %s
+account.username.not_found.code=ACC-0008
+account.username.not_found.exception=fm.pattern.valex.EntityNotFoundException
+
+</code></pre>
+</div>
+
+<h3 id="configuration-detail">Configuration Detail</h3>
+
+<p>Let’s look at a specific configuration element in detail:</p>
+
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">account.id.required</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">An</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">id</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">required."</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0006</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
+</code></pre>
+</div>
+
+<p><strong>account.id.required</strong><br />
+The <em>key</em> used to resolve the error message, code and exception for an error. The dot notatation in the key name is purely conventional; Valex treats the key as an opaque value.</p>
+
+<p><strong>message</strong> <br />
+The error message that should be returned when validation fails for this key. The YAML messages should generally be surrounded by double quotes (double quotes are required when you use <em>interpolated messaging</em> - more on this shortly).</p>
+
+<p><strong>code</strong> <br />
+The error code that should be returned when validation fails for this key. The error code presented above is conventional; choose an error code scheme to suit your needs.</p>
+
+<p><strong>exception</strong>  <br />
+The fully qualified classname of the <em>ReportableException</em> that should be returned when validation fails for this key. Valex requires all configured exceptions to be <em>ReportableExceptions</em>, and a number of <em>ReportableException</em> implementations are provided out of the box:
+* UnprocessableEntityException
+* AuthenticationException
+* AuthorizationException
+* BadRequestException
+* ResourceConflictException
+* EntityNotFoundException</p>
+
+<h3 id="default-exceptions">Default Exceptions</h3>
+<p>You can configure a default exception class to return when a validation element does not contain an explicit <em>exception</em> property.</p>
+
+<p><strong>YAML Configuration</strong>
+<code class="highlighter-rouge">yaml
+default:
+  exception: fm.pattern.valex.UnprocessableEntityException
+</code></p>
+
+<p><strong>Properties Configuration</strong>
+<code class="highlighter-rouge">
+default.exception=fm.pattern.valex.UnprocessableEntityException
+</code></p>
+
+<p>In both cases, an UnprocessableEntityException will be returned when a validation element does not explicitly define an exception property.</p>
+
+<h1 id="validation-using-the-validationservice">Validation using the ValidationService</h1>
+
+<p>Use the <em>ValidationService</em> validate() method to perform validation against your <a href="http://beanvalidation.org/1.0/">BeanValidation</a> annotated models. The validate() method returns a typed <em>Result</em> object, which contain the final (and immutable) state of a validation event.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.ValidationService</span><span class="o">;</span>
+
+<span class="nd">@Service</span>
+<span class="kd">class</span> <span class="nc">AccountServiceImpl</span> <span class="kd">implements</span> <span class="n">AccountService</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ValidationService</span> <span class="n">validationService</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">AccountServiceImpl</span><span class="o">(</span><span class="n">ValidationService</span> <span class="n">validationService</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">validationService</span> <span class="o">=</span> <span class="n">validationService</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Validates the account, and returns the validation Result containing all</span>
+    <span class="c1">// validation errors if the account is invalid.</span>
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">validationService</span><span class="o">.</span><span class="na">validate</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+        <span class="k">if</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">rejected</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Validates the account, and uses the Result doThrow() method to throw the</span>
+    <span class="c1">// underlying exception bound to the result if the account is invalid.</span>
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">validationService</span><span class="o">.</span><span class="na">validate</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+        <span class="k">if</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">rejected</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">result</span><span class="o">.</span><span class="na">doThrow</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">account</span><span class="o">;</span>
+    <span class="o">}</span>    
+
+    <span class="c1">// Validates the account using the fluent orThrow() method, which returns the</span>
+    <span class="c1">// account if the account is valid, otherwise throws the underlying exception</span>
+    <span class="c1">// bound to the result.</span>
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Account</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">validationService</span><span class="o">.</span><span class="na">validate</span><span class="o">(</span><span class="n">account</span><span class="o">).</span><span class="na">orThrow</span><span class="o">();</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">account</span><span class="o">;</span>
+    <span class="o">}</span>      
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Since all ValidationService methods delegate validation execution to the configured BeanValidation <a href="http://docs.jboss.org/hibernate/beanvalidation/spec/1.0/api/javax/validation/Validator.html">Validator</a>, you can use <a href="http://beanvalidation.org/1.0/">JSR-303 BeanValidation</a> annotations to annotate your model.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@UniqueValue</span><span class="o">(</span><span class="n">property</span> <span class="o">=</span> <span class="s">"username"</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.conflict}"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.id.required}"</span><span class="o">)</span>
+  <span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">3</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">128</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.required}"</span><span class="o">)</span>
+  <span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">3</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">128</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.required}"</span><span class="o">)</span>
+  <span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.size}"</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="validation-groups">Validation Groups</h3>
+<p>Valex provides first class support for BeanValidation groups. The validate() method takes a varargs argument of classes that will be used to perform targeted validation.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="nd">@Service</span>
+<span class="kd">class</span> <span class="nc">AccountServiceImpl</span> <span class="kd">implements</span> <span class="n">AccountService</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">validationService</span><span class="o">.</span><span class="na">validate</span><span class="o">(</span><span class="n">account</span><span class="o">,</span> <span class="n">First</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">Second</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+    <span class="o">}</span>     
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h1 id="declarative-validation-using-annotations">Declarative Validation using Annotations</h1>
+
+<p>Valex provides a parameter-scoped @Valid annotation that will automatically trigger validation and return a typed Result (by default) if validation fails.</p>
+
+<p>Implementation note: When you have an interface and an underlying implementation class, the @Valid annotation must be declared on the <em>interface</em> method, and not the <em>concrete</em> method.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+    <span class="c1">// The @Valid annotation is declared on the interface method.</span>
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+<span class="o">}</span>
+
+<span class="nd">@Service</span>
+<span class="kd">class</span> <span class="nc">AccountServiceImpl</span> <span class="kd">implements</span> <span class="n">AccountService</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">...</span> <span class="c1">// if we get here the account passed validation</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>      
+</code></pre>
+</div>
+
+<p>You can configure the @Valid annotation to throw an exception on validation failure by providing the  <code class="highlighter-rouge">throwException = true</code> argument to the @Valid annotation.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Valid</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+    <span class="c1">// Throw an exception if the account is invalid.</span>
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<h3 id="annotation-validation-groups">Annotation Validation Groups</h3>
+
+<p>You can specify one or more validation groups to apply when the @Valid annotation is kicked off.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Valid</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span><span class="o">(</span><span class="n">First</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<h1 id="message-interpolation">Message Interpolation</h1>
+<p>Valex supports two types of message interpolation that can be used to produce dynamic error messages.</p>
+
+<h3 id="beanvalidation-interpolation">BeanValidation Interpolation</h3>
+<p>BeanValidation message interpolation allows you to inject <em>annotation attribute values</em> into error messages. As an example, take the following @Size annotated field with <strong>min</strong> and <strong>max</strong> attributes:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.size}"</span><span class="o">)</span>
+<span class="kd">private</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
+</code></pre>
+</div>
+
+<p>To inject the min and max attribute values into an error message, address the attributes in {braces}:
+<code class="highlighter-rouge">
+account.password.size:
+  message: "Your password must be between {min} and {max} characters."
+  code: ACC-0005
+</code></p>
+
+<p>The {validatedValue} expression can be used to inject the value of the field being validated into your error message.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">)</span>
+<span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>account.username.size:
+  message: "The username {validatedValue} must be between {min} and {max} characters."
+</code></pre>
+</div>
+
+<h3 id="result-interpolation">Result Interpolation</h3>
+<p>Result objects can be created directly by using the <em>Result</em> accept() and reject() methods. The reject() method accepts a key to a configured message or a literal message along with a varargs array for message parameters. The reject() method message format is compatible with the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html">Java Formatter API</a>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public Result&lt;Account&gt; findById(String id) {
+    Account account = repository.findById(id);
+    if(account != null) {
+    	return Result.accept(account);
+    }
+
+    // Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.
+    return Result.reject("account.not_found", id);
+
+    // Return a Result using the given literal error message.
+    return Result.reject("No such account id: %s", id);
+}
+</code></pre>
+</div>
+
+<h1 id="group-sequences">Group Sequences</h1>
+
+<p>Valex provides three GroupSequence implementations for creating (Create.class), updating (Update.class) and deleting (Delete.class) entities. Each GroupSequence has the following definition:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>@GroupSequence({CreateLevel1.class, CreateLevel2.class, CreateLevel3.class, CreateLevel4.class, CreateLevel5.class})
+public interface Create {
+
+}
+</code></pre>
+</div>
+
+<p>Each level represents and ordered configuration step. Valiation will begin by inspecting the level 1 class, and if validation fails at this level no further levels will be inspected. Validation will only continue up the level sequence if validation succeeds at pevious levels.</p>
+
+<p>Using the three Valex groups sequences reduces the boilerplate implementation required to support these common use cases yourself, but you are free to implement your own group sequences as well.</p>
+
+<p>Here’s an example of the Valex Create group sequence applied to an account object. In this example, all of the @NotBlank checks (level 1) will be run first, and if successful the @Size checks (level 2) will be run next, and if successfull the @UniqueValue check (level 3) will be run last.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@UniqueValue</span><span class="o">(</span><span class="n">property</span> <span class="o">=</span> <span class="s">"username"</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.conflict}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span><span class="n">CreateLevel3</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.id.required}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span><span class="n">CreateLevel1</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+  <span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">3</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">128</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span><span class="n">CreateLevel1</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.required}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span><span class="n">CreateLevel1</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+  <span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">3</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">128</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span><span class="n">CreateLevel2</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">UpdateLevel2</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.required}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span><span class="n">CreateLevel1</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+  <span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.size}"</span><span class="o">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="o">{</span> <span class="n">CreateLevel2</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="group-sequence-annotations">Group Sequence Annotations</h3>
+<p>If you plan to use the Valex group sequences, you can also take advantage of the Valex @Create, @Update and @Delete annotations as a shorthand notation to apply group sequence based validation.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.Result</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Create</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Update</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Delete</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+    <span class="c1">// Applies the Create group sequence during validation.</span>
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Create</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+    <span class="c1">// Applies the Update group sequence during validation.</span>
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">update</span><span class="o">(</span><span class="nd">@Update</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+    <span class="c1">// Applies the Delete group sequence during validation.</span>
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">delete</span><span class="o">(</span><span class="nd">@Delete</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The annotations can also be configured to throw the underlying validation result exception if you do not want the annotations to return typed <em>Result</em> objects.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Create</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Update</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.Delete</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Create</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">update</span><span class="o">(</span><span class="nd">@Update</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">delete</span><span class="o">(</span><span class="nd">@Delete</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h1 id="validation-strategy">Validation Strategy</h1>
+
+<p>We’ll run through a strategy where validation is performed in an application’s business layer, and service interfaces within the business layer return typed <em>Results</em>. This approach has a number of benefits, but is not required to use Valex.</p>
+
+<p>Let’s take the following AccountService interface as an example:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+   <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+   <span class="n">Account</span> <span class="nf">update</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+   <span class="n">Account</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+   <span class="n">Account</span> <span class="nf">findById</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">);</span>
+
+   <span class="n">Account</span> <span class="nf">findByUsername</span><span class="o">(</span><span class="n">String</span> <span class="n">username</span><span class="o">);</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The contract isn’t expressive enough to report on both success and failure conditions in a consistent fashion. If an error occurs within the create(), update() or delete() methods, communication about the error would have to be propagated via RuntimeException.</p>
+
+<p>The findById() and findByUsername() methods return an account if found, but could otherwise throw a RuntimeException or return null by convention.</p>
+
+<p>A more expressive contract can provide a simple, consistent approach to handling success and error conditions:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">update</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">findById</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">);</span>
+
+   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">findByUsername</span><span class="o">(</span><span class="n">String</span> <span class="n">username</span><span class="o">);</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>When methods return a typed <em>Result</em>, clients can call the fluent orThrow() method on the Result to return the typed object if the method call was successful, or throw the Result’s underlying exception (as configured in the ValidationMesages configuration file) if the method call failed:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Account</span> <span class="n">pending</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Account</span><span class="o">();</span>
+<span class="o">...</span>
+<span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="n">accountService</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">pending</span><span class="o">).</span><span class="na">orThrow</span><span class="o">();</span>
+
+</code></pre>
+</div>
+
+<p>This approach doesn’t force API clients to implement try/catch logic around method calls since the <em>Result</em> object is effectively acting as a catch block (instead of catching an exception explicitly, the method is conditionally <em>returning</em> one to you). A <em>Result</em> object carries the same intent as a try/catch block, but does so in a less obtrusive way.</p>
+
+<p>Callers may optionally inspect the Result object:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Account</span> <span class="n">pending</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Account</span><span class="o">();</span>
+<span class="o">...</span>
+<span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">accountService</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">pending</span><span class="o">);</span>
+<span class="k">if</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">rejected</span><span class="o">())</span> <span class="o">{</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Reportable</span><span class="o">&gt;</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">getErrors</span><span class="o">();</span>
+  <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Failed to create account: "</span> <span class="o">+</span> <span class="n">errors</span><span class="o">);</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p>Applying this pattern consistently across a program can help reduce congitive load, since callers can expect a consistent and well-defined response from API calls.</p>
+
+<h1 id="building-from-source">Building from Source</h1>
+
+<p>Both JDK 8 and Maven 3 are required to build Valex from source. With these prerequisites in place you can build Valex by:
+<code class="highlighter-rouge">
+git clone https://github.com/PatternFM/valex.git
+cd valex
+mvn clean install
+</code></p>
+
+<h1 id="continuous-integration">Continuous Integration</h1>
+
+<p>The Continuous Integration service for the project is hosted on <a href="https://travis-ci.org/PatternFM/valex">Travis</a></p>
+
+<h1 id="licensing">Licensing</h1>
+
+<p>This software is provided and distributed under the Apache Software License 2.0. Refer to LICENSE.txt for more information.</p>
+
+						</div>
+					</section>
+
+					<section id="source" class="wrapper style3 fade-up">
+						<div class="inner">
+							
+						</div>
+					</section>
+
+					<section id="license" class="wrapper style1 fade-up">
+						<div class="inner">
+
+						</div>
+					</section>
+			</div>
+
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/assets/js/main.js"></script>
+	</body>
+</html>

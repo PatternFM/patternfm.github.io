@@ -1,0 +1,25 @@
+# Build settings
+gems:
+  - jemoji
+  - jekyll-paginate
+
+# Site settings
+title: "Pattern"
+description: > # this means to ignore newlines until "email:"
+   Artificial Intelligence &bull; Machine Learning &bull; Big Data
+
+email: brandon.john.grenier@gmail.com
+logo: "/assets/images/df_logo.jpg"
+float_logo: true
+
+cover: "/assets/images/header-background.jpg"
+logo: "assets/images/logo.jpg"
+name: 'Brandon Grenier'
+author: 'Brandon Grenier'
+
+domain: http://brandon.ai/
+url: http://brandon.ai
+
+paginate: 5
+
+disqus: brandongrenier
