@@ -1,12 +1,10 @@
 ---
 layout: post
-title:  "A YAML-based validation and exception management library that helps you produce consumable REST error payloads."
+title:  "Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java"
 date:   2017-02-18
 ---
 
 # Introduction
-
-Valex is a YAML-based validation and exception management library that helps you produce consumable REST error payloads.
 
 An API should provide a useful error responses in a known, consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:
 
@@ -25,8 +23,8 @@ Valex builds on top of the BeanValidation API to give developers the ability to 
 
 ```yaml
 account.username.required:
-  message: An account username is required.
   code: ACC-0001
+  message: An account username is required.
   exception: fm.pattern.valex.UnprocessableEntityException
 ```
 
@@ -596,27 +594,3 @@ if(result.rejected()) {
 ```
 
 Applying this pattern consistently across a program can help reduce congitive load, since callers can expect a consistent and well-defined response from API calls.
-
-
-
-
-# Building from Source
-
-Both JDK 8 and Maven 3 are required to build Valex from source. With these prerequisites in place you can build Valex by:
-  
-```
-git clone https://github.com/PatternFM/valex.git
-cd valex
-mvn clean install
-```
-
-
-# Continuous Integration
-
-The Continuous Integration service for the project is hosted on [Travis](https://travis-ci.org/PatternFM/valex)
-
-
-
-# Licensing
-
-This software is provided and distributed under the Apache Software License 2.0. Refer to LICENSE.txt for more information.

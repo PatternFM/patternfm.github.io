@@ -3226,7 +3226,7 @@
 			@media screen and (max-width: 1680px) {
 
 				.wrapper > .inner {
-					padding: 4em 4em 2em 4em ;
+					padding: 10px 230px 50px 230px;
 				}
 
 			}
@@ -3260,7 +3260,7 @@
 		}
 
 		.wrapper.style2 {
-			background-color: #FAFAFA;
+			background-color: #2f427b;
 		}
 
 		.wrapper.style2-alt {
@@ -3272,6 +3272,14 @@
 		}
 
 		.wrapper.style3-alt {
+			background-color: #953d75;
+		}
+
+		.wrapper.style4 {
+			background-color: #ff5722;
+		}
+
+		.wrapper.style4-alt {
 			background-color: #953d75;
 		}
 
@@ -3891,7 +3899,7 @@
 #documentation h1 {
   letter-spacing: 1.5px;
   font-weight: 300;
-	margin-top: 40px;
+	margin-top: 70px;
 	font-family: "Open Sans";
 	font-weight: 500;
 	font-style: normal;
@@ -3900,6 +3908,10 @@
 	font-size: 35px;
 	line-height: 1.25;
 	color: #333;
+}
+
+#documentation h3 {
+	font-size: 1.5em;
 }
 
 #documentation p {
@@ -3918,10 +3930,10 @@
 }
 
 #documentation code {
-  font-size: 15px;
+  font-size: 14px;
   padding: 3px 10px;
   color: #000;
-  background-color: #EEE;
+  background-color: #f6f8fa;
 }
 
 #documentation pre {
@@ -3960,24 +3972,30 @@ h1 {
 		background-size: 100% 100%;
 	}
 
-  #about h1 {
+	.overview {
+		background-attachment: fixed;
+		background-image: url("/assets/css/images/intro.svg");
+		background-position: top right;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+	}
+
+  .overview h1 {
 		text-transform: uppercase;
 	}
 
-		#about p {
-			font-size: 1.1em;
-	    letter-spacing: 0.4px;
-	    font-family: "Open Sans";
-	    color: #FFFFFF;
+	.overview  p {
+		font-size: 1.1em;
+	  letter-spacing: 0.4px;
+	  font-family: "Open Sans";
+	  color: #FFFFFF;
+	}
+
+	@media screen and (max-width: 980px) {
+		#about p br {
+			display: none;
 		}
-
-			@media screen and (max-width: 980px) {
-
-				#about p br {
-					display: none;
-				}
-
-			}
+	}
 
 			@media screen and (max-width: 736px) {
 

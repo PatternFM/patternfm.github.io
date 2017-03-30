@@ -2,61 +2,81 @@
 layout: default
 ---
 
-<div class="teaserimage">
-    <div class="teaserimage-image" {% if site.cover %}style="background-image: url({{ site.cover | prepend: site.baseurl }})"{% endif %}>
-        Teaser Image
-    </div>
-</div>
+<!DOCTYPE HTML>
+<html>
+	<head>
+    <title>{{ page.title }}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Voces" rel="stylesheet">
+	</head>
+	<body>
 
-<header class="blog-header">
-    {% if site.logo %}
-      <a class="blog-logo" href="{{site.url}}" style="background-image: url('{{ site.logo | prepend: site.domain }}')">{{ site.title }}</a>
-    {% endif %}
-    <h1 class="blog-title">{{ site.title }}</h1>
-    <h2 class="blog-description">{{ site.description }}</h2>
-</header>
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#valex">Valex</a></li>
+							<li><a href="#tokamak">Tokamak</a></li>
+							<li><a href="#cycle">Cycle</a></li>
+							<li><a href="#commons">Commons</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
 
+			<div id="wrapper">
+					<section id="valex" class="wrapper style1 fullscreen fade-up overview">
+						<div class="inner">
+							<h1>Valex</h1>
+							<p>Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java.</p>
+							<ul class="actions">
+								<li><a href="/2017/02/18/valex.html" class="button">Learn more</a></li>
+							</ul>
+						</div>
+					</section>
 
-<main class="content" role="main">
+					<section id="tokamak" class="wrapper style2 fullscreen fade-up overview">
+						<div class="inner">
+              <h1>Tokamak</h1>
+							<p>Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java.</p>
+							<ul class="actions">
+								<li><a href="/2017/02/18/valex.html" class="button">Learn more</a></li>
+							</ul>
+						</div>
+					</section>
 
-    <div class="cf frame">
-      {% for post in paginator.posts %}
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="article-item">
-            <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
-            <header class="post-header">
-              <h2 class="post-title" itemprop="name"><a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a></h2>
-            </header>
-            <section class="post-excerpt" itemprop="description">
-              <p>{{ post.excerpt | strip_html | truncatewords: 51 }}</p>
-            </section>
-            <div class="post-meta">
-            </div>
-          </div>
-        </article>
-      {% endfor %}
-    </div>
+					<section id="cycle" class="wrapper style3 fullscreen fade-up overview">
+						<div class="inner">
+              <h1>Cycle</h1>
+							<p>Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java.</p>
+							<ul class="actions">
+								<li><a href="/2017/02/18/valex.html" class="button">Learn more</a></li>
+							</ul>
+						</div>
+					</section>
 
-    {% if paginator.total_pages > 1 %}
-    <nav class="pagination" role="navigation">
-      {% if paginator.previous_page %}
-        {% if paginator.page == 2 %}
-          <a class="prev" href={{ "/" | prepend: site.baseurl }}>&laquo;</a>
-        {% else %}
-          <a class="prev" href={{ "/page" | prepend: site.baseurl | append: paginator.previous_page }}>&laquo;</a>
-        {% endif %}
-      {% else %}
-         <span class="no-prev">&laquo;</span>
-      {% endif %}
+					<section id="commons" class="wrapper style4 fullscreen fade-up overview">
+						<div class="inner">
+              <h1>Commons</h1>
+							<p>Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java.</p>
+							<ul class="actions">
+								<li><a href="/2017/02/18/valex.html" class="button">Learn more</a></li>
+							</ul>
+						</div>
+					</section>
+			</div>
 
-      <span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
-
-      {% if paginator.next_page %}
-         <a class="next" href={{ "/page" | prepend: site.baseurl | append: paginator.next_page }}>&raquo;</a>
-      {% else %}
-          <span class="no-next">&raquo;</span>
-      {% endif %}
-    </nav>
-    {% endif %}
-
-</main>
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/assets/js/main.js"></script>
+	</body>
+</html>
