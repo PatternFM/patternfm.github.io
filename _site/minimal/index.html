@@ -65,7 +65,7 @@
 </code></pre>
 </div>
 
-<p>You can specify the length of the id to generate by provding a length argument:</p>
+<p>You can specify the length of the id to generate by providing a <em>length</em> argument:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"pciIi"</span>
 <span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"Sf3hcRp8yIveqZbkx3AMTpomZzbDVHfxyOIyGzjZCaPaGdc0NC"</span>
@@ -89,8 +89,7 @@
 
 <p>The JSON API exposes a JavaScript-inspired interface on top of the excellent <a href="https://github.com/FasterXML/jackson">Jackson library</a> for JSON parsing.</p>
 
-<h4 id="converting-java-to-json">Converting Java to JSON</h4>
-<p>The stringify() method serializes a Java value into a JSON string.</p>
+<h4 id="jsonstringify---serialize-a-java-value-into-a-json-string"><strong>JSON.stringify() - serialize a Java value into a JSON string.</strong></h4>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="s">"Smith"</span><span class="o">);</span>
 <span class="n">JSON</span><span class="o">.</span><span class="na">stringify</span><span class="o">(</span><span class="n">person</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="o">{</span><span class="s">"firstName"</span><span class="o">:</span><span class="s">"John"</span><span class="o">,</span><span class="s">"lastName"</span><span class="o">:</span><span class="s">"Smith"</span><span class="o">}</span>
@@ -120,8 +119,7 @@
 </code></pre>
 </div>
 
-<h4 id="converting-json-to-java">Converting JSON to Java</h4>
-<p>The parse() method deserializes a JSON string into a Java value.</p>
+<h4 id="jsonparse---deserialize-a-json-string-into-a-java-value"><strong>JSON.parse() - deserialize a JSON string into a Java value.</strong></h4>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">JSON</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"{\"firstName\":\"John\",\"lastName\":\"Smith\"}"</span><span class="o">,</span> <span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 

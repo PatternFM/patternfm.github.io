@@ -43,7 +43,7 @@
 						<div class="inner">
 							<h1 id="introduction">Introduction</h1>
 
-<p>An API should provide a useful error responses in a known, consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:</p>
+<p>An API should provide a useful error responses in a predictable and consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -620,6 +620,12 @@ account.password.size:
 </div>
 
 <p>Applying this pattern consistently across a program can help reduce congitive load, since callers can expect a consistent and well-defined response from API calls.</p>
+
+<h1 id="custom-configuration-filename">Custom Configuration Filename</h1>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  java -jar myfile.jar -Dvalex.config=MyFile.yml
+</code></pre>
+</div>
 
 						</div>
 					</section>

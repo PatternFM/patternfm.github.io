@@ -5,7 +5,7 @@ title:  "Produce predictable and consumable REST error payloads with Valex, a YA
 
 # Introduction
 
-An API should provide a useful error responses in a known, consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:
+An API should provide a useful error responses in a predictable and consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:
 
 ```
 {
@@ -593,3 +593,9 @@ if(result.rejected()) {
 ```
 
 Applying this pattern consistently across a program can help reduce congitive load, since callers can expect a consistent and well-defined response from API calls.
+
+# Custom Configuration Filename
+
+```
+  java -jar myfile.jar -Dvalex.config=MyFile.yml
+```

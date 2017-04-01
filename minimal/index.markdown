@@ -27,7 +27,7 @@ By default, the id generator will produce a 25 character length alphanumeric str
 IdGenerator.generateId() => "jDWatQsPtRNOMhYAnVWUDF3LE"
 ```
 
-You can specify the length of the id to generate by provding a length argument:
+You can specify the length of the id to generate by providing a *length* argument:
 
 ```java
 IdGenerator.generateId(5) => "pciIi"
@@ -51,8 +51,7 @@ IdGenerator.generateId("txn", 30) => "txn_6CKbkcPQgk8OCONGu82Tv2rv664P2H"
 
 The JSON API exposes a JavaScript-inspired interface on top of the excellent [Jackson library](https://github.com/FasterXML/jackson) for JSON parsing.
 
-#### Converting Java to JSON
-The stringify() method serializes a Java value into a JSON string.
+#### **JSON.stringify() - serialize a Java value into a JSON string.**
 
 ```java
 Person person = new Person("John", "Smith");
@@ -82,8 +81,7 @@ logger.info(account);
 System.out.pritnln(account);
 ```
 
-#### Converting JSON to Java
-The parse() method deserializes a JSON string into a Java value.
+#### **JSON.parse() - deserialize a JSON string into a Java value.**
 
 ```java
 Person person = JSON.parse("{\"firstName\":\"John\",\"lastName\":\"Smith\"}", Person.class);
