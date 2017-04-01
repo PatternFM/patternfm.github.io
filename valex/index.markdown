@@ -5,100 +5,104 @@ title:  "Produce predictable and consumable REST error payloads with Valex, a YA
 
 # Introduction
 
-An API should provide a useful error responses in a predictable and consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:
+An API should provide useful error responses in a predictable and consumable format. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code.
+
+Valex can help you produce meaningful responses that include an appropriate HTTP response code as well as a JSON payload that looks like this:
 
 ```
 {
   "errors": [
     {
-      "code": "ACC-0001",
+      "code": "ACC-1000",
       "message": "An account username is required."
+    },
+    {
+      "code": "ADD-1001",
+      "message": "An account password is required."
     }
   ]
 }
 ```
 
-Valex builds on top of the BeanValidation API to give developers the ability to configure an error message, error code, and an exception to throw when a validation check fails, all in one spot.
+The JSON payload is entirely configuration driven, so you can produce a JSON payload that looks like this just as easily:
+
+```
+{
+  "errors": [
+    {
+      "code": "ACC-1000",
+      "message": "An account username is required.",
+      "field": "account.username",
+      "support_url": "https://support.yoursite.com/kb/articles/acc-1000.html"
+    },
+    {
+      "code": "ADD-1001",
+      "message": "An account password is required.",
+      "field": "account.password",
+      "support_url": "https://support.yoursite.com/kb/articles/add-1001.html"
+    }
+  ]
+}
+```
+
+# Quick Start
+
+First, add Valex to your project dependency list:
+
+```xml
+<dependency>
+    <groupId>fm.pattern</groupId>
+    <artifactId>valex</artifactId>
+    <version>1.0.7</version>
+</dependency>
+```
+
+Second, create a file named ```ValidationMessages.yml``` on the root of your classpath with the following configuration:
 
 ```yaml
 account.username.required:
-  code: ACC-0001
+  code: ACC-1000
   message: An account username is required.
+  exception: fm.pattern.valex.UnprocessableEntityException
+
+account.password.required:
+  code: ACC-1001
+  message: An account password is required.
   exception: fm.pattern.valex.UnprocessableEntityException
 ```
 
-The exception, when thrown, will carry with it the error message and error code as specified in the configuration. If you're using Spring, you can use the @ExceptionHandler to easily convert the exception into the JSON format specified above:
+Third, annotate your model with BeanValidation annotations. The ```message``` annotation attribute is used to resolve properties from the ```ValidationMessages.yml``` file.
+
+```java
+public class Account {
+
+  @NotBlank(message = "{account.username.required}")
+  private String username;
+
+  @NotBlank(message = "{account.password.required}")
+  private String password;
+
+}
+```
+
+Fourth, setup your Spring ```ExceptionHandler``` to handle the exceptions you've configured in your ```ValidationMessages.yml``` file. This allows you to map the appropriate HTTP response code against the exception classes you've configured. The toRepresentation() method of the Valex UnprocessableEntityException returns an ```ErrorsRepresentation``` object, which produces the appropriate JSON payload described in the introduction.
 
 ```java
 @RestController
 public class Endpoint {
 
-	@ResponseBody
 	@ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
 	@ExceptionHandler(UnprocessableEntityException.class)
 	public ErrorsRepresentation handleUnprocessableEntity(UnprocessableEntityException exception) {
 		return exception.toRepresentation();
 	}
 
-	@ResponseBody
-	@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler(AuthenticationException.class)
-	public ErrorsRepresentation handleAuthentication(AuthenticationException exception) {
-		return exception.toRepresentation();
-	}
-
-	@ResponseBody
-	@ResponseStatus(value = HttpStatus.FORBIDDEN)
-	@ExceptionHandler(AuthorizationException.class)
-	public ErrorsRepresentation handleAuthorization(AuthorizationException exception) {
-		return exception.toRepresentation();
-	}
-
-	@ResponseBody
-	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	@ExceptionHandler(EntityNotFoundException.class)
-	public ErrorsRepresentation handleEntityNotFound(EntityNotFoundException exception) {
-		return exception.toRepresentation();
-	}
-
-	@ResponseBody
-	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(InternalErrorException.class)
-	public ErrorsRepresentation handleInternalError(EntityNotFoundException exception) {
-		return exception.toRepresentation();
-	}
-
 }
 ```
-Because Valex builds on top of the JSR-303 BeanValidation API, you can annotate your models with standard BeanValidation annotations. A ValidationMessages.properties file can also be used with Valex to minimise the migration path for existing JSR-303 implementations that want to use Valex for more robust API error reporting.
 
-
-# Getting Started
-
-To get started, add the following dependency to your dependency list:
-
-```xml
-<dependency>
-    <groupId>fm.pattern</groupId>
-    <artifactId>valex</artifactId>
-    <version>1.0.6</version>
-</dependency>
-```
-
-Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:
+Fifth, configure and wire up the Valex validation APIs. Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:
 
 ```java
-import javax.validation.Validator;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import fm.pattern.valex.SimpleValidationService;
-import fm.pattern.valex.ValidationService;
-import fm.pattern.valex.annotations.ValidationAdvisor;
-
 @Configuration
 @EnableAspectJAutoProxy
 public class ValidationConfiguration {
@@ -120,7 +124,7 @@ public class ValidationConfiguration {
 
 }
 ```
-The Valex API relies on an underlying BeanValidation Validator implementation to execute valiation logic on annotated models. In the example above we're bootstrapping the Spring LocalValidatorFactory bean, but you can bootstrap your own validator as well:
+The Valex API relies on an underlying [BeanValidation](http://beanvalidation.org/1.0/) Validator implementation to execute valiation logic on annotated models. In the example above we're using the Spring LocalValidatorFactory bean, but you can use your own validator as well:
 
 ```java
 @Bean(name = "validator")
@@ -129,7 +133,16 @@ public Validator validator() {
 }
 ```
 
-If you plan to make use of Valex annotations, make sure you enable AspectJ proxying by including the ```@EnableAspectJAutoProxy``` annotation.
+
+Last, trigger validation. Valex provides a few ways to trigger validation, but we'll start with the Valex @Valid annotation. In this case, we instruct the annotation to throw an exception if validation fails by passing a ```throwException = true``` argument to the annotation.
+
+```java
+public interface AccountService {
+
+    public Result<Account> create(@Valid(throwException = true) Account account);
+
+}
+```
 
 
 # Configure Error Codes, Messages and Exceptions

@@ -43,99 +43,104 @@
 						<div class="inner">
 							<h1 id="introduction">Introduction</h1>
 
-<p>An API should provide a useful error responses in a predictable and consumable format. The representation of an error should be no different than the representation of any other resource, just with its own set of fields. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code. A JSON representation of an error payload would look like:</p>
+<p>An API should provide useful error responses in a predictable and consumable format. An error response should provide a few things for a developer - a useful error message, a unique error code, and a meaningful HTTP response code.</p>
+
+<p>Valex can help you produce meaningful responses that include an appropriate HTTP response code as well as a JSON payload that looks like this:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
-      </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACC-0001"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACC-1000"</span><span class="p">,</span><span class="w">
       </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An account username is required."</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ADD-1001"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An account password is required."</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 </div>
 
-<p>Valex builds on top of the BeanValidation API to give developers the ability to configure an error message, error code, and an exception to throw when a validation check fails, all in one spot.</p>
+<p>The JSON payload is entirely configuration driven, so you can produce a JSON payload that looks like this just as easily:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACC-1000"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An account username is required."</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"account.username"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"support_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://support.yoursite.com/kb/articles/acc-1000.html"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ADD-1001"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An account password is required."</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"account.password"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"support_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://support.yoursite.com/kb/articles/add-1001.html"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<h1 id="quick-start">Quick Start</h1>
+
+<p>First, add Valex to your project dependency list:</p>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>fm.pattern<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>valex<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.7<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre>
+</div>
+
+<p>Second, create a file named <code class="highlighter-rouge">ValidationMessages.yml</code> on the root of your classpath with the following configuration:</p>
 
 <div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">account.username.required</span><span class="pi">:</span>
-  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-0001</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-1000</span>
   <span class="s">message</span><span class="pi">:</span> <span class="s">An account username is required.</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
+
+<span class="s">account.password.required</span><span class="pi">:</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">ACC-1001</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s">An account password is required.</span>
   <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
 </code></pre>
 </div>
 
-<p>The exception, when thrown, will carry with it the error message and error code as specified in the configuration. If you’re using Spring, you can use the @ExceptionHandler to easily convert the exception into the JSON format specified above:</p>
+<p>Third, annotate your model with BeanValidation annotations. The <code class="highlighter-rouge">message</code> annotation attribute is used to resolve properties from the <code class="highlighter-rouge">ValidationMessages.yml</code> file.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.required}"</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+
+  <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.required}"</span><span class="o">)</span>
+  <span class="kd">private</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Fourth, setup your Spring <code class="highlighter-rouge">ExceptionHandler</code> to handle the exceptions you’ve configured in your <code class="highlighter-rouge">ValidationMessages.yml</code> file. This allows you to map the appropriate HTTP response code against the exception classes you’ve configured. The toRepresentation() method of the Valex UnprocessableEntityException returns an <code class="highlighter-rouge">ErrorsRepresentation</code> object, which produces the appropriate JSON payload described in the introduction.</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@RestController</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Endpoint</span> <span class="o">{</span>
 
-	<span class="nd">@ResponseBody</span>
 	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">UNPROCESSABLE_ENTITY</span><span class="o">)</span>
 	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">UnprocessableEntityException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
 	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleUnprocessableEntity</span><span class="o">(</span><span class="n">UnprocessableEntityException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
 		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
 	<span class="o">}</span>
 
-	<span class="nd">@ResponseBody</span>
-	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">UNAUTHORIZED</span><span class="o">)</span>
-	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">AuthenticationException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleAuthentication</span><span class="o">(</span><span class="n">AuthenticationException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
-	<span class="o">}</span>
-
-	<span class="nd">@ResponseBody</span>
-	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">FORBIDDEN</span><span class="o">)</span>
-	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">AuthorizationException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleAuthorization</span><span class="o">(</span><span class="n">AuthorizationException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
-	<span class="o">}</span>
-
-	<span class="nd">@ResponseBody</span>
-	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">NOT_FOUND</span><span class="o">)</span>
-	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">EntityNotFoundException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleEntityNotFound</span><span class="o">(</span><span class="n">EntityNotFoundException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
-	<span class="o">}</span>
-
-	<span class="nd">@ResponseBody</span>
-	<span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">INTERNAL_SERVER_ERROR</span><span class="o">)</span>
-	<span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="n">InternalErrorException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-	<span class="kd">public</span> <span class="n">ErrorsRepresentation</span> <span class="nf">handleInternalError</span><span class="o">(</span><span class="n">EntityNotFoundException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="na">toRepresentation</span><span class="o">();</span>
-	<span class="o">}</span>
-
 <span class="o">}</span>
 </code></pre>
 </div>
-<p>Because Valex builds on top of the JSR-303 BeanValidation API, you can annotate your models with standard BeanValidation annotations. A ValidationMessages.properties file can also be used with Valex to minimise the migration path for existing JSR-303 implementations that want to use Valex for more robust API error reporting.</p>
 
-<h1 id="getting-started">Getting Started</h1>
+<p>Fifth, configure and wire up the Valex validation APIs. Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:</p>
 
-<p>To get started, add the following dependency to your dependency list:</p>
-
-<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>fm.pattern<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>valex<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.0.6<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre>
-</div>
-
-<p>Valex exposes a ValidationService API that can be used to explicitly trigger validation, as well as @Valid annotations that can be used to perform validation declaratively. You can wire these services into your Spring application using the following configuration:</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">javax.validation.Validator</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.EnableAspectJAutoProxy</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.validation.beanvalidation.LocalValidatorFactoryBean</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.SimpleValidationService</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.ValidationService</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">fm.pattern.valex.annotations.ValidationAdvisor</span><span class="o">;</span>
-
-<span class="nd">@Configuration</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Configuration</span>
 <span class="nd">@EnableAspectJAutoProxy</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ValidationConfiguration</span> <span class="o">{</span>
 
@@ -157,7 +162,7 @@
 <span class="o">}</span>
 </code></pre>
 </div>
-<p>The Valex API relies on an underlying BeanValidation Validator implementation to execute valiation logic on annotated models. In the example above we’re bootstrapping the Spring LocalValidatorFactory bean, but you can bootstrap your own validator as well:</p>
+<p>The Valex API relies on an underlying <a href="http://beanvalidation.org/1.0/">BeanValidation</a> Validator implementation to execute valiation logic on annotated models. In the example above we’re using the Spring LocalValidatorFactory bean, but you can use your own validator as well:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Bean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"validator"</span><span class="o">)</span>
 <span class="kd">public</span> <span class="n">Validator</span> <span class="nf">validator</span><span class="o">()</span> <span class="o">{</span>
@@ -166,7 +171,15 @@
 </code></pre>
 </div>
 
-<p>If you plan to make use of Valex annotations, make sure you enable AspectJ proxying by including the <code class="highlighter-rouge">@EnableAspectJAutoProxy</code> annotation.</p>
+<p>Last, trigger validation. Valex provides a few ways to trigger validation, but we’ll start with the Valex @Valid annotation. In this case, we instruct the annotation to throw an exception if validation fails by passing a <code class="highlighter-rouge">throwException = true</code> argument to the annotation.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span><span class="o">(</span><span class="n">throwException</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <h1 id="configure-error-codes-messages-and-exceptions">Configure Error Codes, Messages and Exceptions</h1>
 <p>You can configure your application’s error messages, error codes and exceptions using a YAML configuration file or a properties configuration file. It’s simply a matter of syntax preference in terms of which method you choose. The properties file is available to support an easier migration path if you have an existing BeanValidation implementation with a ValidationMessages.properties file already defined.</p>
