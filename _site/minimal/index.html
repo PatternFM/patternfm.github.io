@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+    <title>Minimal: A simple Java API that exposes minimalist interfaces for common functions including identity generation, JSON parsing and reflection.</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Voces" rel="stylesheet">
+	</head>
+	<body>
+
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#about">About</a></li>
+							<li><a href="#documentation">Documentation</a></li>
+							<li><a href="https://github.com/PatternFM/minimal">Source Code</a></li>
+							<li><a href="https://travis-ci.org/PatternFM/minimal">Travis CI</a></li>
+	            <li><a href="https://codebeat.co/projects/github-com-patternfm-minimal-master">CodeBeat</a></li>
+							<li><a href="https://coveralls.io/github/PatternFM/minimal">Coveralls</a></li>
+							<li><a href="https://github.com/PatternFM/minimal/blob/master/LICENSE.txt">License</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+			<div id="wrapper">
+					<section id="about" class="wrapper style4 fullscreen fade-up overview">
+						<div class="inner">
+							<h1>Minimal</h1>
+							<p>A simple Java API that exposes minimalist interfaces for common functions including identity generation, JSON parsing and reflection.
+							<ul class="actions">
+								<li><a href="#documentation" class="button scrolly">Learn more</a></li>
+							</ul>
+						</div>
+					</section>
+
+					<section id="documentation" class="wrapper style2 spotlights">
+						<div class="inner">
+							<h1 id="introduction">Introduction</h1>
+
+<p>Minimal is a simple Java API that exposes minimalist interfaces for common functions including identity generation, JSON parsing and reflection.</p>
+
+<p>To get started, add the following dependency to your depedency list:</p>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>fm.pattern<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>minimal<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre>
+</div>
+
+<h2 id="identity-generation">Identity Generation</h2>
+
+<p>The id generator uses a cryptographically strong random number generator to produce sequences of alphanumeric strings that can be used as unique identifiers.</p>
+
+<p>By default, the id generator will produce a 25 character length alphanumeric string, with a mix of uppercase and lowercase characters:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">()</span> <span class="o">=&gt;</span> <span class="s">"jDWatQsPtRNOMhYAnVWUDF3LE"</span>
+</code></pre>
+</div>
+
+<p>You can specify the length of the id to generate by provding a length argument:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"pciIi"</span>
+<span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"Sf3hcRp8yIveqZbkx3AMTpomZzbDVHfxyOIyGzjZCaPaGdc0NC"</span>
+</code></pre>
+</div>
+
+<p>You can add a prefix to generated ids. The id generator will add an underscore between the specified prefix and the (default 25 character length) alphanumeric sequence.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="s">"txn"</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"txn_Lh2LRvtK4euznW686ScmNNkw4"</span>
+</code></pre>
+</div>
+
+<p>You can specify a prefix and the length of the id to generate:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="s">"txn"</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"txn_qGoxTSqc30"</span>
+<span class="n">IdGenerator</span><span class="o">.</span><span class="na">generateId</span><span class="o">(</span><span class="s">"txn"</span><span class="o">,</span> <span class="mi">30</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="s">"txn_6CKbkcPQgk8OCONGu82Tv2rv664P2H"</span>
+</code></pre>
+</div>
+
+<h2 id="json-parsing">JSON Parsing</h2>
+
+<p>The JSON API exposes a JavaScript-inspired interface on top of the excellent <a href="https://github.com/FasterXML/jackson">Jackson library</a> for JSON parsing.</p>
+
+<h4 id="converting-java-to-json">Converting Java to JSON</h4>
+<p>The stringify() method serializes a Java value into a JSON string.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="s">"Smith"</span><span class="o">);</span>
+<span class="n">JSON</span><span class="o">.</span><span class="na">stringify</span><span class="o">(</span><span class="n">person</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="o">{</span><span class="s">"firstName"</span><span class="o">:</span><span class="s">"John"</span><span class="o">,</span><span class="s">"lastName"</span><span class="o">:</span><span class="s">"Smith"</span><span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This method will throw a <em>JsonParsingException</em> at runtime if the Java value cannot be serialized.</p>
+
+<p><strong><em>Tip:</em></strong> If you override the toString() implementation to generate JSON it becomes simple to produce well formatted JSON logs, and really useful when debugging and troubleshooting.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">JSON</span><span class="o">.</span><span class="na">stringify</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+
+<span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Account</span><span class="o">();</span>
+
+<span class="c1">// Logs a well formatted JSON string with the account's current state.</span>
+<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+
+<span class="c1">// Prints a well formatted JSON string with the account's current state instead of it's hash code.</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">pritnln</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<h4 id="converting-json-to-java">Converting JSON to Java</h4>
+<p>The parse() method deserializes a JSON string into a Java value.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">JSON</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"{\"firstName\":\"John\",\"lastName\":\"Smith\"}"</span><span class="o">,</span> <span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">pritnln</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getFirstName</span><span class="o">());</span> <span class="o">=&gt;</span> <span class="s">"John"</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">pritnln</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getLastName</span><span class="o">());</span> <span class="o">=&gt;</span> <span class="s">"Smith"</span>
+</code></pre>
+</div>
+
+<p>This method will throw a <em>JsonParsingException</em> at runtime if the JSON string cannot be deserialized.</p>
+
+<h2 id="reflection">Reflection</h2>
+<p>The Reflection API provides a map-like interface on top of the Java Reflection API for getting and setting property values on Java objects. We’ll run through a number of examples  using the following object model:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Entity</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">...</span>
+
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Address</span> <span class="kd">extends</span> <span class="n">Entity</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">suburb</span><span class="o">;</span>
+    <span class="o">...</span>
+
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="kd">extends</span> <span class="n">Entity</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Address</span> <span class="n">address</span><span class="o">;</span>
+    <span class="o">...</span>
+
+<span class="o">}</span>
+
+
+<span class="n">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Address</span><span class="o">();</span>
+<span class="n">address</span><span class="o">.</span><span class="na">setId</span><span class="o">(</span><span class="s">"1234abcd"</span><span class="o">);</span>
+<span class="n">address</span><span class="o">.</span><span class="na">setSuburb</span><span class="o">(</span><span class="s">"Bondi"</span><span class="o">);</span>
+
+<span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">();</span>
+<span class="n">person</span><span class="o">.</span><span class="na">setId</span><span class="o">(</span><span class="s">"abcd12345"</span><span class="o">);</span>
+<span class="n">person</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">"Sally"</span><span class="o">);</span>
+<span class="n">person</span><span class="o">.</span><span class="na">setAddress</span><span class="o">(</span><span class="n">address</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<h4 id="getting-values">Getting Values</h4>
+<p>The get API returns a property value for a given property name. If no such property value exists, a <em>null</em> value is returned. Property values returned from the get API will be of type Object by default, but you can specify the return type explicitly to override the default behaviour.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Retrieves the 'name' property from the Person object.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"name"</span><span class="o">);</span> <span class="o">=&gt;</span> <span class="s">"Sally"</span>
+
+<span class="c1">// Retrieves the 'id' property from the Person object superclass.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"id"</span><span class="o">);</span> <span class="o">=&gt;</span> <span class="s">"abcd12345"</span>
+
+<span class="c1">// Retrieves the 'suburb' property from the composed Address object.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"address.suburb"</span><span class="o">);</span> <span class="o">=&gt;</span> <span class="s">"Bondi"</span>
+
+<span class="c1">// Retrieves the 'id' property from the composed Address object superclass.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"address.id"</span><span class="o">);</span> <span class="o">=&gt;</span> <span class="s">"1234abcd"</span>
+
+<span class="c1">// Retrieves the 'address' property from the Person object, returned as an Address through an explicit cast.</span>
+<span class="n">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="o">(</span><span class="n">Address</span><span class="o">)</span> <span class="n">Reflection</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"address"</span><span class="o">);</span>
+
+<span class="c1">// Retrieves the 'address' property from the Person object, returned as an Address by specifying a return type.</span>
+<span class="n">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="n">Reflection</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"address"</span><span class="o">,</span> <span class="n">Address</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<h4 id="setting-values">Setting Values</h4>
+<p>The set API sets a property value for a given property name. An updated object instance is returned when a property value is set successfully, and null otherwise.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Sets the 'name' property on the Person object.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Suzan"</span><span class="o">);</span>
+
+<span class="c1">// Sets the 'id' property on the Person object superclass.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"id"</span><span class="o">,</span> <span class="s">"11111"</span><span class="o">);</span>
+
+<span class="c1">// Sets the 'suburb' property on the composed Address object.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"address.suburb"</span><span class="o">,</span> <span class="s">"St. Kilda"</span><span class="o">);</span>
+
+<span class="c1">// Sets the 'id' property on the composed Address object superclass.</span>
+<span class="n">Reflection</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"address.id"</span><span class="o">,</span> <span class="s">"22222"</span><span class="o">);</span>
+
+<span class="c1">// Setting an invalid property value will return a null instance.</span>
+<span class="n">Person</span> <span class="n">updated</span> <span class="o">=</span> <span class="n">Reflection</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"invalid_property"</span><span class="o">,</span> <span class="s">"12345"</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">updated</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="kc">null</span>
+
+<span class="c1">// Setting a valid property value will return the updated instance.</span>
+<span class="n">Person</span> <span class="n">updated</span> <span class="o">=</span> <span class="n">Reflection</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Katherine"</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">updated</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="o">{</span><span class="s">"id"</span><span class="o">:</span><span class="s">"11111"</span><span class="o">,</span> <span class="s">"name"</span><span class="o">:</span><span class="s">"Katherine"</span><span class="o">,</span> <span class="o">...}</span>
+</code></pre>
+</div>
+
+						</div>
+					</section>
+			</div>
+
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/assets/js/main.js"></script>
+	</body>
+</html>

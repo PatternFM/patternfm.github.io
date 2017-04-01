@@ -3929,6 +3929,10 @@
   border-radius: 3px;
 }
 
+#documentation pre span, #documentation code span {
+	font-weight: normal !important;
+}
+
 #documentation code {
   font-size: 14px;
   padding: 3px 10px;
