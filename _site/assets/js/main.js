@@ -71,8 +71,9 @@
 						var $this = $(this);
 
 						// External link? Bail.
-							if ($this.attr('href').charAt(0) != '#')
+							if ($this.attr('href').charAt(0) != '#') {
 								return;
+							}
 
 						// Deactivate all links.
 							$sidebar_a.removeClass('active');
@@ -85,9 +86,14 @@
 					})
 					.each(function() {
 
-						var	$this = $(this),
-							id = $this.attr('href'),
-							$section = $(id);
+						var	$this = $(this);
+
+						var id = $this.attr('href');
+						if(id.charAt(0) != "#") {
+							return;
+						}
+
+					  var $section = $(id);
 
 						// No section for this link? Bail.
 							if ($section.length < 1)
