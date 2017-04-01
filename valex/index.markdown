@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java"
+title:  "Valex: Produce predictable and consumable REST error payloads with Valex, a YAML-based validation and exception management library for Java"
 date:   2017-02-18
 ---
 
