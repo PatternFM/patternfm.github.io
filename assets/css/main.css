@@ -3252,6 +3252,10 @@
 			background-color: #261c3e;
 		}
 
+		.wrapper.style0 {
+			background-color: #452773;
+		}
+
 		.wrapper.style1 {
 			background-color: #5e42a6;
 		}
@@ -3984,6 +3988,7 @@ h1 {
 
   .overview h1 {
 		text-transform: uppercase;
+		-webkit-font-smoothing: antialiased;
 	}
 
 	.overview  p {
