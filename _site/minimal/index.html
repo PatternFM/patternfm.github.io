@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Voces" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway:300,400|Voces" rel="stylesheet">
 	</head>
 	<body>
 
@@ -32,7 +32,7 @@
 					<section id="about" class="wrapper style4 fullscreen fade-up overview">
 						<div class="inner">
 							<h1>Minimal</h1>
-							<p>A simple Java API that exposes minimalist interfaces for common functions including identity generation, JSON parsing and reflection.
+							<p>Used throughout the Pattern stack, Minimal is a simple Java API that exposes minimalist interfaces for common functions including identity generation, JSON parsing and reflection.</p>
 							<ul class="actions">
 								<li><a href="#documentation" class="button scrolly">Learn more</a></li>
 							</ul>
@@ -55,7 +55,7 @@
 </code></pre>
 </div>
 
-<h2 id="identity-generation">Identity Generation</h2>
+<h1 id="identity-generation">Identity Generation</h1>
 
 <p>The id generator uses a cryptographically strong random number generator to produce sequences of alphanumeric strings that can be used as unique identifiers.</p>
 
@@ -85,7 +85,7 @@
 </code></pre>
 </div>
 
-<h2 id="json-parsing">JSON Parsing</h2>
+<h1 id="json-parsing">JSON Parsing</h1>
 
 <p>The JSON API exposes a JavaScript-inspired interface on top of the excellent <a href="https://github.com/FasterXML/jackson">Jackson library</a> for JSON parsing.</p>
 
@@ -98,7 +98,7 @@
 
 <p>This method will throw a <em>JsonParsingException</em> at runtime if the Java value cannot be serialized.</p>
 
-<p><strong><em>Tip:</em></strong> If you override the toString() implementation to generate JSON it becomes simple to produce well formatted JSON logs, and really useful when debugging and troubleshooting.</p>
+<p><strong>Tip:</strong> If you override the toString() implementation to generate JSON it becomes simple to produce well formatted JSON logs, and really useful when debugging and troubleshooting.</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
 
@@ -130,7 +130,7 @@
 
 <p>This method will throw a <em>JsonParsingException</em> at runtime if the JSON string cannot be deserialized.</p>
 
-<h2 id="reflection">Reflection</h2>
+<h1 id="reflection">Reflection</h1>
 <p>The Reflection API provides a map-like interface on top of the Java Reflection API for getting and setting property values on Java objects. We’ll run through a number of examples  using the following object model:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Entity</span> <span class="o">{</span>
@@ -167,7 +167,7 @@
 </code></pre>
 </div>
 
-<h4 id="getting-values">Getting Values</h4>
+<h2 id="getting-values">Getting Values</h2>
 <p>The get API returns a property value for a given property name. If no such property value exists, a <em>null</em> value is returned. Property values returned from the get API will be of type Object by default, but you can specify the return type explicitly to override the default behaviour.</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Retrieves the 'name' property from the Person object.</span>
@@ -190,7 +190,7 @@
 </code></pre>
 </div>
 
-<h4 id="setting-values">Setting Values</h4>
+<h2 id="setting-values">Setting Values</h2>
 <p>The set API sets a property value for a given property name. An updated object instance is returned when a property value is set successfully, and null otherwise.</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Sets the 'name' property on the Person object.</span>
@@ -218,14 +218,6 @@
 						</div>
 					</section>
 			</div>
-
-			<footer id="footer" class="wrapper style1-alt">
-				<div class="inner">
-					<ul class="menu">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</div>
-			</footer>
 
 			<script src="/assets/js/jquery.min.js"></script>
 			<script src="/assets/js/jquery.scrollex.min.js"></script>

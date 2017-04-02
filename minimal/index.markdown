@@ -17,7 +17,7 @@ To get started, add the following dependency to your depedency list:
 </dependency>
 ```
 
-## Identity Generation
+# Identity Generation
 
 The id generator uses a cryptographically strong random number generator to produce sequences of alphanumeric strings that can be used as unique identifiers.
 
@@ -47,7 +47,7 @@ IdGenerator.generateId("txn", 10) => "txn_qGoxTSqc30"
 IdGenerator.generateId("txn", 30) => "txn_6CKbkcPQgk8OCONGu82Tv2rv664P2H"
 ```
 
-## JSON Parsing
+# JSON Parsing
 
 The JSON API exposes a JavaScript-inspired interface on top of the excellent [Jackson library](https://github.com/FasterXML/jackson) for JSON parsing.
 
@@ -60,7 +60,7 @@ JSON.stringify(person) => {"firstName":"John","lastName":"Smith"}
 
 This method will throw a *JsonParsingException* at runtime if the Java value cannot be serialized.
 
-***Tip:*** If you override the toString() implementation to generate JSON it becomes simple to produce well formatted JSON logs, and really useful when debugging and troubleshooting.
+**Tip:** If you override the toString() implementation to generate JSON it becomes simple to produce well formatted JSON logs, and really useful when debugging and troubleshooting.
 
 ```java
 public class Account {
@@ -92,7 +92,7 @@ System.out.pritnln(person.getLastName()); => "Smith"
 
 This method will throw a *JsonParsingException* at runtime if the JSON string cannot be deserialized.
 
-## Reflection
+# Reflection
 The Reflection API provides a map-like interface on top of the Java Reflection API for getting and setting property values on Java objects. We'll run through a number of examples  using the following object model:
 
 ```java
@@ -129,7 +129,7 @@ person.setName("Sally");
 person.setAddress(address);
 ```
 
-#### Getting Values
+## Getting Values
 The get API returns a property value for a given property name. If no such property value exists, a *null* value is returned. Property values returned from the get API will be of type Object by default, but you can specify the return type explicitly to override the default behaviour.
 
 ```java
@@ -152,7 +152,7 @@ Address address = (Address) Reflection.get(person, "address");
 Address address = Reflection.get(person, "address", Address.class);
 ```
 
-#### Setting Values
+## Setting Values
 The set API sets a property value for a given property name. An updated object instance is returned when a property value is set successfully, and null otherwise.
 
 ```java
