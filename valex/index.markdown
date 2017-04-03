@@ -71,7 +71,7 @@ account.password.required:
   exception: fm.pattern.valex.UnprocessableEntityException
 ```
 
-Third, annotate your model with BeanValidation annotations. The ```message``` annotation attribute is used to resolve properties from the ```ValidationMessages.yml``` file.
+Third, annotate a model with [BeanValidation](http://beanvalidation.org/1.0/) annotations. The ```message``` attribute is used to resolve properties from the ```ValidationMessages.yml``` file.
 
 ```java
 public class Account {
