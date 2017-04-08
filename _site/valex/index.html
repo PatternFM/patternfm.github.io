@@ -208,7 +208,9 @@
 </div>
 
 <h4 id="trigger-validation">6. Trigger validation</h4>
-<p>Valex provides a few ways to trigger validation, but we’ll start with the Valex @Valid annotation. In this case, we instruct the annotation to throw an exception if validation fails by passing a <code class="highlighter-rouge">throwException = true</code> argument to the annotation.</p>
+<p>Valex provides a three ways to trigger validation:</p>
+
+<p>Annotation-driven validation for JSR-303 annotated models:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AccountService</span> <span class="o">{</span>
 
@@ -218,11 +220,16 @@
 </code></pre>
 </div>
 
+<p>Explicit validation using the ValidationService API for JSR-303 annotated models:</p>
+
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AccountService</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
-    	<span class="k">if</span><span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">isBlank</span><span class="o">(</span><span class="n">account</span><span class="o">.</span><span class="na">getUsername</span><span class="o">())</span> <span class="o">{</span>
-    		<span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"account.username.required"</span><span class="o">);</span>
+    <span class="kd">private</span> <span class="n">ValidationService</span> <span class="n">validationService</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+    	<span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">validationService</span><span class="o">.</span><span class="na">validate</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+    	<span class="k">if</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">rejected</span><span class="o">())</span> <span class="o">{</span>
+    		<span class="n">result</span><span class="o">.</span><span class="na">doThrow</span><span class="o">();</span>
     	<span class="o">}</span>
     <span class="o">}</span>
 
@@ -230,9 +237,11 @@
 </code></pre>
 </div>
 
+<p>Custom validation, using the Result API to throw the exception bound to the specified validation key:</p>
+
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AccountService</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="n">Account</span> <span class="n">account</span><span class="o">)</span> <span class="o">{</span>
     	<span class="k">if</span><span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">isBlank</span><span class="o">(</span><span class="n">account</span><span class="o">.</span><span class="na">getUsername</span><span class="o">())</span> <span class="o">{</span>
     		<span class="n">Result</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="s">"account.username.required"</span><span class="o">);</span>
     	<span class="o">}</span>
@@ -242,9 +251,11 @@
 </code></pre>
 </div>
 
+<p>You should now be at a point where you can validate models, and return an appropriate HTTP response with a well defined error payload if something goes wrong.</p>
+
 <p><a name="configuration"></a></p>
 
-<h1 id="configure-error-payloads-and-exceptions">Configure error payloads and exceptions</h1>
+<h1 id="valex-configuration">Valex Configuration</h1>
 <p>You can configure your application’s error messages, error codes and exceptions using a YAML configuration file or a properties configuration file. It’s simply a matter of syntax preference in terms of which method you choose. The properties file is available to support an easier migration path if you have an existing BeanValidation implementation with a ValidationMessages.properties file already defined.</p>
 
 <h3 id="yaml-configuration">YAML Configuration</h3>
@@ -364,6 +375,27 @@ The fully qualified classname of the <em>ReportableException</em> that should be
 
 <p>In both cases, an UnprocessableEntityException will be returned when a validation element does not explicitly define an exception property.</p>
 
+<h3 id="customizing-yaml-configuration">Customizing YAML Configuration</h3>
+<p>Valex supports aribtrary key value pairs when you configure Valex using YAML, in cases where you’d like to produce an error payload that includes more than an code and a message:</p>
+
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">account.id.required</span><span class="pi">:</span>
+  <span class="s">message</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Some</span><span class="nv"> </span><span class="s">error</span><span class="nv"> </span><span class="s">message"</span>
+  <span class="s">code</span><span class="pi">:</span> <span class="s">some_code</span>
+  <span class="s">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://mysite.com/kb/errors/acc-0006"</span>
+  <span class="s">some_key</span><span class="pi">:</span> <span class="s">some_value</span>
+  <span class="s">exception</span><span class="pi">:</span> <span class="s">fm.pattern.valex.UnprocessableEntityException</span>
+</code></pre>
+</div>
+
+<h3 id="customizing-the-valex-configuration-filename">Customizing the Valex Configuration Filename</h3>
+<p>Valex will look for a <code class="highlighter-rouge">ValidationMessages.properties</code> file or <code class="highlighter-rouge">ValidationMessages.yml</code> file by default, but you can specify your own filename by passing in the <code class="highlighter-rouge">valex.config</code> option as a java property when you start your app:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  java -jar app.jar -Dvalex.config=MyFile.yml
+</code></pre>
+</div>
+
+<p><a name="validationservice"></a></p>
+
 <h1 id="validation-using-the-validationservice">Validation using the ValidationService</h1>
 
 <p>Use the <em>ValidationService</em> validate() method to perform validation against your <a href="http://beanvalidation.org/1.0/">BeanValidation</a> annotated models. The validate() method returns a typed <em>Result</em> object, which contain the final (and immutable) state of a validation event.</p>
@@ -451,6 +483,8 @@ The fully qualified classname of the <em>ReportableException</em> that should be
 <span class="o">}</span>
 </code></pre>
 </div>
+
+<p><a name="annotationvaldiation"></a></p>
 
 <h1 id="declarative-validation-using-annotations">Declarative Validation using Annotations</h1>
 
@@ -695,13 +729,10 @@ account.password.size:
 </code></pre>
 </div>
 
+<p>This style is easier to test, compared to APIs that throw exceptions.</p>
+
 <p>Applying this pattern consistently across a program can help reduce congitive load, since callers can expect a consistent and well-defined response from API calls.</p>
 
-<h1 id="custom-configuration-filename">Custom Configuration Filename</h1>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>  java -jar myfile.jar -Dvalex.config=MyFile.yml
-</code></pre>
-</div>
 
 						</div>
 					</section>

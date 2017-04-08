@@ -162,7 +162,9 @@ public class Endpoint {
 
 
 #### 6. Trigger validation 
-Valex provides a few ways to trigger validation, but we'll start with the Valex @Valid annotation. In this case, we instruct the annotation to throw an exception if validation fails by passing a ```throwException = true``` argument to the annotation.
+Valex provides a three ways to trigger validation:
+
+Annotation-driven validation for JSR-303 annotated models:   
 
 ```java
 public interface AccountService {
@@ -172,22 +174,30 @@ public interface AccountService {
 }
 ```
 
+
+Explicit validation using the ValidationService API for JSR-303 annotated models:
+
 ```java
 public class AccountService {
 
-    public Result<Account> create(Account account) {
-    	if(StringUtils.isBlank(account.getUsername()) {
-    		return Result.reject("account.username.required");
+    private ValidationService validationService;
+
+    public Account create(Account account) {
+    	Result<Account> result = validationService.validate(account);
+    	if(result.rejected()) {
+    		result.doThrow();
     	}
     }
 
 }
 ```
 
+Custom validation, using the Result API to throw the exception bound to the specified validation key:
+
 ```java
 public class AccountService {
 
-    public Result<Account> create(Account account) {
+    public Account create(Account account) {
     	if(StringUtils.isBlank(account.getUsername()) {
     		Result.raise("account.username.required");
     	}
@@ -196,9 +206,12 @@ public class AccountService {
 }
 ```
 
+You should now be at a point where you can validate models, and return an appropriate HTTP response with a well defined error payload if something goes wrong.
+
+
 <a name="configuration"></a>
 
-# Configure error payloads and exceptions
+# Valex Configuration
 You can configure your application's error messages, error codes and exceptions using a YAML configuration file or a properties configuration file. It's simply a matter of syntax preference in terms of which method you choose. The properties file is available to support an easier migration path if you have an existing BeanValidation implementation with a ValidationMessages.properties file already defined.
 
 ### YAML Configuration
@@ -321,6 +334,27 @@ default.exception=fm.pattern.valex.UnprocessableEntityException
 
 In both cases, an UnprocessableEntityException will be returned when a validation element does not explicitly define an exception property.
 
+### Customizing YAML Configuration
+Valex supports aribtrary key value pairs when you configure Valex using YAML, in cases where you'd like to produce an error payload that includes more than an code and a message: 
+
+```yaml
+account.id.required:
+  message: "Some error message"
+  code: some_code
+  url: "https://mysite.com/kb/errors/acc-0006"
+  some_key: some_value
+  exception: fm.pattern.valex.UnprocessableEntityException
+```
+
+### Customizing the Valex Configuration Filename
+Valex will look for a ```ValidationMessages.properties``` file or ```ValidationMessages.yml``` file by default, but you can specify your own filename by passing in the ```valex.config``` option as a java property when you start your app:
+
+```
+  java -jar app.jar -Dvalex.config=MyFile.yml
+```
+
+
+<a name="validationservice"></a>
 
 # Validation using the ValidationService
 
@@ -410,6 +444,8 @@ class AccountServiceImpl implements AccountService {
 
 }
 ```
+
+<a name="annotationvaldiation"></a>
 
 # Declarative Validation using Annotations
 
@@ -658,10 +694,8 @@ if(result.rejected()) {
 }
 ```
 
+This style is easier to test, compared to APIs that throw exceptions.
+
 Applying this pattern consistently across a program can help reduce congitive load, since callers can expect a consistent and well-defined response from API calls.
 
-# Custom Configuration Filename
 
-```
-  java -jar myfile.jar -Dvalex.config=MyFile.yml
-```
