@@ -3901,6 +3901,17 @@
 	font-family: "Open Sans";
 }
 
+#documentation a {
+	color: #1a73ab;
+	text-decoration: underline;
+	transition: all 0.3s;
+}
+
+#documentation a:hover {
+	color: #000;
+	text-decoration: underline;
+}
+
 #documentation h1 {
   font-weight: 300;
 	margin-top: 50px;
@@ -3921,6 +3932,10 @@
 	font-size: 1.5em;
 }
 
+#documentation h4 {
+	font-size: 22px;
+}
+
 #documentation p {
 	font-weight: 400;
   font-style: normal;
@@ -3937,9 +3952,12 @@
 
 #documentation code {
   font-size: 14px;
-  padding: 3px 10px;
   color: #000;
-  background-color: #f6f8fa;
+	padding: 2px 4px;
+	white-space: nowrap;
+	background-color: #f7f7f9;
+	border: 1px solid #e1e1e8;
+	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
 #documentation pre {
@@ -3952,6 +3970,8 @@
 
 #documentation pre > code {
     border: 0;
+		border: none !important;
+		white-space: pre !important;
     padding-right: 0;
     padding-left: 0;
     background-color: #f6f8fa;
