@@ -394,6 +394,54 @@ The fully qualified classname of the <em>ReportableException</em> that should be
 </code></pre>
 </div>
 
+<h1 id="message-interpolation">Message Interpolation</h1>
+<p>Valex supports two types of message interpolation that can be used to produce dynamic error messages.</p>
+
+<h3 id="beanvalidation-interpolation">BeanValidation Interpolation</h3>
+<p>BeanValidation message interpolation allows you to inject <em>annotation attribute values</em> into error messages. As an example, take the following @Size annotated field with <strong>min</strong> and <strong>max</strong> attributes:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.size}"</span><span class="o">)</span>
+<span class="kd">private</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
+</code></pre>
+</div>
+
+<p>To inject the min and max attribute values into an error message, address the attributes in {braces}:
+<code class="highlighter-rouge">
+account.password.size:
+  message: "Your password must be between {min} and {max} characters."
+  code: ACC-0005
+</code></p>
+
+<p>The {validatedValue} expression can be used to inject the value of the field being validated into your error message.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">)</span>
+<span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>account.username.size:
+  message: "The username {validatedValue} must be between {min} and {max} characters."
+</code></pre>
+</div>
+
+<h3 id="result-interpolation">Result Interpolation</h3>
+<p>Result objects can be created directly by using the <em>Result</em> accept() and reject() methods. The reject() method accepts a key to a configured message or a literal message along with a varargs array for message parameters. The reject() method message format is compatible with the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html">Java Formatter API</a>.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">findById</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">account</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    	<span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.</span>
+    <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"account.not_found"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+
+    <span class="c1">// Return a Result using the given literal error message.</span>
+    <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"No such account id: %s"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
 <p><a name="validationservice"></a></p>
 
 <h1 id="validation-using-the-validationservice">Validation using the ValidationService</h1>
@@ -535,54 +583,6 @@ The fully qualified classname of the <em>ReportableException</em> that should be
 
     <span class="kd">public</span> <span class="n">Account</span> <span class="nf">create</span><span class="o">(</span><span class="nd">@Valid</span><span class="o">(</span><span class="n">First</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="n">Account</span> <span class="n">account</span><span class="o">);</span>
 
-<span class="o">}</span>
-</code></pre>
-</div>
-
-<h1 id="message-interpolation">Message Interpolation</h1>
-<p>Valex supports two types of message interpolation that can be used to produce dynamic error messages.</p>
-
-<h3 id="beanvalidation-interpolation">BeanValidation Interpolation</h3>
-<p>BeanValidation message interpolation allows you to inject <em>annotation attribute values</em> into error messages. As an example, take the following @Size annotated field with <strong>min</strong> and <strong>max</strong> attributes:</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.password.size}"</span><span class="o">)</span>
-<span class="kd">private</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
-</code></pre>
-</div>
-
-<p>To inject the min and max attribute values into an error message, address the attributes in {braces}:
-<code class="highlighter-rouge">
-account.password.size:
-  message: "Your password must be between {min} and {max} characters."
-  code: ACC-0005
-</code></p>
-
-<p>The {validatedValue} expression can be used to inject the value of the field being validated into your error message.</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Size</span><span class="o">(</span><span class="n">min</span> <span class="o">=</span> <span class="mi">8</span><span class="o">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">255</span><span class="o">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">"{account.username.size}"</span><span class="o">)</span>
-<span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>account.username.size:
-  message: "The username {validatedValue} must be between {min} and {max} characters."
-</code></pre>
-</div>
-
-<h3 id="result-interpolation">Result Interpolation</h3>
-<p>Result objects can be created directly by using the <em>Result</em> accept() and reject() methods. The reject() method accepts a key to a configured message or a literal message along with a varargs array for message parameters. The reject() method message format is compatible with the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html">Java Formatter API</a>.</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Account</span><span class="o">&gt;</span> <span class="nf">findById</span><span class="o">(</span><span class="n">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">account</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-    	<span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="c1">// Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.</span>
-    <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"account.not_found"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
-
-    <span class="c1">// Return a Result using the given literal error message.</span>
-    <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">reject</span><span class="o">(</span><span class="s">"No such account id: %s"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
 </div>

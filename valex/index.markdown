@@ -353,6 +353,55 @@ Valex will look for a ```ValidationMessages.properties``` file or ```ValidationM
   java -jar app.jar -Dvalex.config=MyFile.yml
 ```
 
+# Message Interpolation
+Valex supports two types of message interpolation that can be used to produce dynamic error messages.
+
+### BeanValidation Interpolation
+BeanValidation message interpolation allows you to inject *annotation attribute values* into error messages. As an example, take the following @Size annotated field with **min** and **max** attributes:
+
+```java
+@Size(min = 8, max = 255, message = "{account.password.size}")
+private String password;
+```
+
+To inject the min and max attribute values into an error message, address the attributes in {braces}:
+```
+account.password.size:
+  message: "Your password must be between {min} and {max} characters."
+  code: ACC-0005
+```
+
+The {validatedValue} expression can be used to inject the value of the field being validated into your error message.
+
+```java
+@Size(min = 8, max = 255, message = "{account.username.size}")
+private String username;
+```
+
+```
+account.username.size:
+  message: "The username {validatedValue} must be between {min} and {max} characters."
+```
+
+### Result Interpolation
+Result objects can be created directly by using the *Result* accept() and reject() methods. The reject() method accepts a key to a configured message or a literal message along with a varargs array for message parameters. The reject() method message format is compatible with the [Java Formatter API](https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html).
+
+```java
+public Result<Account> findById(String id) {
+    Account account = repository.findById(id);
+    if(account != null) {
+    	return Result.accept(account);
+    }
+
+    // Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.
+    return Result.reject("account.not_found", id);
+
+    // Return a Result using the given literal error message.
+    return Result.reject("No such account id: %s", id);
+}
+```
+
+
 
 <a name="validationservice"></a>
 
@@ -499,56 +548,6 @@ public interface AccountService {
 
 }
 ```
-
-
-# Message Interpolation
-Valex supports two types of message interpolation that can be used to produce dynamic error messages.
-
-### BeanValidation Interpolation
-BeanValidation message interpolation allows you to inject *annotation attribute values* into error messages. As an example, take the following @Size annotated field with **min** and **max** attributes:
-
-```java
-@Size(min = 8, max = 255, message = "{account.password.size}")
-private String password;
-```
-
-To inject the min and max attribute values into an error message, address the attributes in {braces}:
-```
-account.password.size:
-  message: "Your password must be between {min} and {max} characters."
-  code: ACC-0005
-```
-
-The {validatedValue} expression can be used to inject the value of the field being validated into your error message.
-
-```java
-@Size(min = 8, max = 255, message = "{account.username.size}")
-private String username;
-```
-
-```
-account.username.size:
-  message: "The username {validatedValue} must be between {min} and {max} characters."
-```
-
-### Result Interpolation
-Result objects can be created directly by using the *Result* accept() and reject() methods. The reject() method accepts a key to a configured message or a literal message along with a varargs array for message parameters. The reject() method message format is compatible with the [Java Formatter API](https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html).
-
-```java
-public Result<Account> findById(String id) {
-    Account account = repository.findById(id);
-    if(account != null) {
-    	return Result.accept(account);
-    }
-
-    // Return a result by looking up the 'account.not_found' error, and inject the 'id' value into the error message.
-    return Result.reject("account.not_found", id);
-
-    // Return a Result using the given literal error message.
-    return Result.reject("No such account id: %s", id);
-}
-```
-
 
 # Group Sequences
 
