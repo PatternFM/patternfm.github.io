@@ -3248,12 +3248,54 @@
 
 			}
 
+    .home h1, .home p {
+			color: #333 !important;
+		}
+
+		.home a {
+			color: #444 !important;
+			border-color: #555 !important;
+			-moz-transition: all 0.2s ease !important;
+	    -webkit-transition: all 0.2s ease !important;
+	    -ms-transition: all 0.2s ease !important;
+	    transition: all 0.2s ease !important;
+		}
+
+		.home .valex:hover {
+			background: #5e42a6;
+			border-color: #5e42a6;
+			color: #FFF !important;
+		}
+
+		.home .tokamak:hover {
+			background: #2f427b;
+			border-color: #2f427b;
+			color: #FFF !important;
+		}
+
+		.home .spin:hover {
+			background: #b74e91;
+			border-color: #b74e91;
+			color: #FFF !important;
+		}
+
+		.home .minimal:hover {
+			background: #ff5722;
+			border-color: #ff5722;
+			color: #FFF !important;
+		}
+
+		.home h1 {
+			font-size: 2.4em;
+		}
+
 		.wrapper.alt {
 			background-color: #261c3e;
 		}
 
 		.wrapper.style0 {
-			background-color: #452773;
+			background-color: #FFF;
+			text-align: center;
 		}
 
 		.wrapper.style1 {
