@@ -54,6 +54,64 @@
 						<div class="inner">
 							<h1 id="introduction">Introduction</h1>
 
+<h1 id="quick-start">Quick Start</h1>
+
+<h4 id="add-spin-to-your-project-dependency-list">1. Add Spin to your project dependency list</h4>
+
+<p><strong>Maven</strong></p>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>fm.pattern<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.3<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre>
+</div>
+
+<p><strong>Gradle</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>compile group: 'fm.pattern', name: 'spin', version: '1.0.3'
+</code></pre>
+</div>
+
+<h4 id="write-a-junit-test-extending-automatedacceptancetest">2. Write a JUnit test extending AutomatedAcceptanceTest</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>import fm.pattern.spin.junit.AutomatedAcceptanceTest;
+
+public class MyTestCase extends AutomatedAcceptanceTest {
+
+    @Test
+    public void someTest() {
+    
+    }
+
+}
+</code></pre>
+</div>
+<p>#### 3. Write start and stop scripts for your server</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+nohup mvn spring-boot:run -Dspring.profiles.active<span class="o">=</span><span class="nv">$SPRING_PROFILE</span> &gt;/dev/null 2&gt;&amp;1 &amp;
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+curl -s -X POST http://localhost:9601/manage/shutdown &gt; /dev/null
+</code></pre>
+</div>
+
+<h4 id="place-a-file-named-spinyml-on-the-root-of-your-classpath">4. Place a file named spin.yml on the root of your classpath</h4>
+
+<div class="language-yaml highlighter-rouge"><pre class="highlight"><code><span class="s">Tokamak Server</span><span class="pi">:</span> 
+  <span class="s">start</span><span class="pi">:</span> <span class="s">../your-server/start.sh</span>
+  <span class="s">stop</span><span class="pi">:</span> <span class="s">../your-server/stop.sh</span>
+  <span class="s">ping</span><span class="pi">:</span> <span class="s">http://localhost:9600/v1/ping</span>
+  <span class="s">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">:/usr/local/bin"</span>
+</code></pre>
+</div>
+
 						</div>
 					</section>
 			</div>
