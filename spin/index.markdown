@@ -8,10 +8,7 @@ title:  "The Spin framework allows you to seamlessly start and stop your microse
 
 # Quick Start
 
-#### 1. Add Spin to your project dependency list
-
-
-**Maven**   
+#### 1. Add Spin to your project dependency list  
 
 ```xml
 <dependency>
@@ -21,13 +18,9 @@ title:  "The Spin framework allows you to seamlessly start and stop your microse
 </dependency>
 ```
 
-**Gradle**
-
-```
-compile group: 'fm.pattern', name: 'spin', version: '1.0.3'
-```
-
 #### 2. Write a JUnit test extending AutomatedAcceptanceTest
+
+This is the only Java code you'll need to write.
 
 ```
 import fm.pattern.spin.junit.AutomatedAcceptanceTest;
@@ -41,27 +34,32 @@ public class MyTestCase extends AutomatedAcceptanceTest {
 
 }
 ```
+
 #### 3. Write start and stop scripts for your server
 
-```
-#!/bin/bash
-
-nohup mvn spring-boot:run -Dspring.profiles.active=$SPRING_PROFILE >/dev/null 2>&1 &
-```
+You can use any programming or scripting language that you like to start and stop your server, so long as Spin can execute it from the command line. 
 
 ```
-#!/bin/bash
-
-curl -s -X POST http://localhost:9601/manage/shutdown > /dev/null
+#!/bin/sh
+nohup mvn spring-boot:run >/dev/null 2>&1 &
 ```
 
+```
+#!/bin/sh
+curl -s -X POST http://localhost:8081/manage/shutdown > /dev/null
+```
 
 #### 4. Place a file named spin.yml on the root of your classpath
 
+Configure the relative location to your start and stop scripts. You must also specify a fully qualified URL to a service endpoint (a ping or healthcheck endpoint), which Spin will check to determine if your server is up and running.
+
 ```yaml
-Tokamak Server: 
+Your Server: 
   start: ../your-server/start.sh
   stop: ../your-server/stop.sh
   ping: http://localhost:9600/v1/ping
-  path: ":/usr/local/bin"
 ```  
+
+#### 5. Run your test
+
+Run your test like you normally would though your IDE or Maven. Spin will determine if your server is running, and boot it if necessary. The JUnit test suite will begin once your server is up and running. At the end of the test suite Spin will shutdown your server if it was started by Spin.
