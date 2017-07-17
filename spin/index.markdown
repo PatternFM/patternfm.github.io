@@ -62,4 +62,4 @@ Your Server:
 
 #### 5. Run your test
 
-Run your test like you normally would though your IDE or Maven. Spin will determine if your server is running, and boot it if necessary. The JUnit test suite will begin once your server is up and running. At the end of the test suite Spin will shutdown your server if it was started by Spin.
+Run your test like you normally would though your IDE or Maven. Spin will determine if your server is running, and boot it if necessary - the JUnit test suite will begin once your server is up and running. At the end of the test suite Spin will shutdown your server if it was started by Spin.
